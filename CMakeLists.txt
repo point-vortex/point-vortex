@@ -10,8 +10,8 @@ set(CMAKE_PREFIX_PATH $ENV{QT6_DIR})
 
 # -------------------------------------------------- Setting up QT
 set(QT_VERSION 6)
-set(REQUIRED_LIBS Core Gui Widgets)
-set(REQUIRED_LIBS_QUALIFIED Qt6::Core Qt6::Gui Qt6::Widgets)
+set(REQUIRED_LIBS Core Gui Widgets OpenGL)
+set(REQUIRED_LIBS_QUALIFIED Qt6::Core Qt6::Gui Qt6::Widgets Qt6::OpenGL)
 
 file(GLOB_RECURSE HEADERS "${PROJECT_SOURCE_DIR}/include/*.h")
 file(GLOB_RECURSE SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp")
