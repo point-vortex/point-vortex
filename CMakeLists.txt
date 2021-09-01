@@ -6,18 +6,26 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
+set(CMAKE_PREFIX_PATH $ENV{QT6_DIR})
 
 # -------------------------------------------------- Setting up QT
 set(QT_VERSION 6)
 set(REQUIRED_LIBS Core Gui Widgets)
 set(REQUIRED_LIBS_QUALIFIED Qt6::Core Qt6::Gui Qt6::Widgets)
 
-add_executable(${PROJECT_NAME} main.cpp)
+file(GLOB_RECURSE HEADERS "${PROJECT_SOURCE_DIR}/include/*.h")
+file(GLOB_RECURSE SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp")
+
+include_directories(${CMAKE_SOURCE_DIR}/include)
+add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
 if (NOT CMAKE_PREFIX_PATH)
     message(WARNING "CMAKE_PREFIX_PATH is not defined, you may need to set it "
             "(-DCMAKE_PREFIX_PATH=\"path/to/Qt/lib/cmake\" or -DCMAKE_PREFIX_PATH=/usr/include/{host}/qt{version}/ on Ubuntu)")
 endif ()
+
+find_package(OpenGL REQUIRED)
+find_package(GLUT REQUIRED)
 
 find_package(Qt${QT_VERSION} COMPONENTS ${REQUIRED_LIBS} REQUIRED)
 target_link_libraries(${PROJECT_NAME} ${REQUIRED_LIBS_QUALIFIED})
@@ -55,9 +63,9 @@ endif ()
 
 # -------------------------------------------------- Compiling GLSL shaders
 if (${CMAKE_HOST_SYSTEM_PROCESSOR} STREQUAL "AMD64")
-    set(GLSL_VALIDATOR "$ENV{VULKAN_SDK}/Bin/glslangValidator.exe")
+    find_program(GLSL_VALIDATOR NAMES glslangValidator PATH "$ENV{VULKAN_SDK}/Bin")
 else()
-    set(GLSL_VALIDATOR "$ENV{VULKAN_SDK}/Bin32/glslangValidator.exe")
+    find_program(GLSL_VALIDATOR NAMES glslangValidator PATH "$ENV{VULKAN_SDK}/Bin32")
 endif()
 
 file(GLOB_RECURSE GLSL_SOURCE_FILES
