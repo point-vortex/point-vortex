@@ -25,7 +25,9 @@ if (NOT CMAKE_PREFIX_PATH)
 endif ()
 
 find_package(OpenGL REQUIRED)
-find_package(GLUT REQUIRED)
+if (NOT WIN32) # TODO: change to if linux
+    find_package(GLUT REQUIRED)
+endif()
 
 find_package(Qt${QT_VERSION} COMPONENTS ${REQUIRED_LIBS} REQUIRED)
 target_link_libraries(${PROJECT_NAME} ${REQUIRED_LIBS_QUALIFIED})
