@@ -20,20 +20,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef POINT_VORTEX_FLOWDATASET_H
-#define POINT_VORTEX_FLOWDATASET_H
+#ifndef POINT_VORTEX_DATATYPE_H
+#define POINT_VORTEX_DATATYPE_H
 
-#include <QMap>
+#include <QString>
 
-#include "DataTypes/DataType.h"
+#include "utils/ICopyable.h"
 
-namespace NFlow {
-    class FlowDataset {
+namespace DTypes {
+    class DataType : public utils::ICopyable {
     protected:
-        QMap<QString, DTypes::DataType> data;
-
+        QString typeName = "unknown";
+    public:
+        virtual ~DataType() = default;
+        [[nodiscard]] DataType *copy() const override = 0;
     };
 }
 
-
-#endif //POINT_VORTEX_FLOWDATASET_H
+#endif //POINT_VORTEX_DATATYPE_H
