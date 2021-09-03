@@ -20,16 +20,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "Table.h"
+#include "DataTypes/Table.h"
 
 #include <utility>
 
 namespace DTypes {
-    Table::Table(): data() {
-
+    Table::Table() : data(), rowsSize(0) {
     }
 
-    Table::Table(const Table &reference): data(reference.data) {
+    Table::Table(const Table &reference) : data(reference.data), rowsSize(reference.rowsSize) {
 
     }
 
@@ -38,46 +37,86 @@ namespace DTypes {
     }
 
 
+    Table::iterator::iterator(Table *ptr, std::size_t row) : rowsShift(row), table(ptr) {}
 
-    Table::Iterator::Iterator(Table *ptr, size_t row): rowsShift(row), table(ptr) {}
+    void Table::iterator::updateRow() {
+        this->row.erase(this->row.begin(), this->row.end());
+        for (std::pair<const QString, std::vector<DataType *>> &item : this->table->data) {
+            this->row.insert(std::make_pair(item.first, item.second.at(this->rowsShift)));
+        }
+    }
 
-    Table::Iterator &Table::Iterator::operator++() {
+    Table::iterator &Table::iterator::operator++() {
         ++this->rowsShift;
+        this->updateRow();
         return *this;
     }
 
-    Table::Iterator Table::Iterator::operator++(int) {
+    const Table::iterator Table::iterator::operator++(int) {
         ++this->rowsShift;
-        return Table::Iterator(table);
+        this->updateRow();
+        return {table};
     }
 
-    Table::Iterator &Table::Iterator::operator--() {
+    Table::iterator &Table::iterator::operator--() {
         --this->rowsShift;
+        this->updateRow();
         return *this;
     }
 
-    Table::Iterator Table::Iterator::operator--(int) {
+    const Table::iterator Table::iterator::operator--(int) {
         --this->rowsShift;
-        return Table::Iterator(table);
+        this->updateRow();
+        return {table};
     }
 
-    bool operator==(const Table::Iterator &left, const Table::Iterator &right) {
+    bool operator==(const Table::iterator &left, const Table::iterator &right) {
         return left.rowsShift == right.rowsShift;
     }
 
-    bool operator!=(const Table::Iterator &left, const Table::Iterator &right) {
+    bool operator!=(const Table::iterator &left, const Table::iterator &right) {
         return left.rowsShift != right.rowsShift;
     }
 
-    Table::Iterator::value_type &Table::Iterator::operator*() const {
-        Table::Row row{};
-        for (std::pair<const QString, std::vector<DataType *>>& item : this->table->data) {
-            row.data.insert(std::make_pair(item.first, item.second.at(this->rowsShift)));
-        }
-        return row;
+    Table::iterator Table::begin() noexcept {
+        return {this, 0};
     }
 
-    Table::Iterator::pointer Table::Iterator::operator->() {
-        return nullptr;
+    Table::iterator Table::end() noexcept {
+        return {this, this->rowsSize};
+    }
+
+    void Table::erase(size_t row) noexcept {
+
+    }
+
+    Table::iterator Table::erase(const Table::iterator& position) noexcept {
+        if (position.rowsShift >= this->rowsSize) return this->end();
+        for (std::pair<const QString, std::vector<DataType*>>& column : this->data) {
+            column.second.erase(column.second.begin() + position.rowsShift);
+        }
+        return {nullptr, position.rowsShift};
+    }
+
+    Table::iterator Table::erase(const Table::iterator& begin, const Table::iterator &end) noexcept {
+        if (begin.rowsShift >= this->rowsSize) return this->end();
+        if (end.rowsShift > this->rowsSize) return this->end();
+        for (std::pair<const QString, std::vector<DataType*>>& column : this->data) {
+            auto vectorBegin = column.second.begin();
+            column.second.erase(vectorBegin + begin.rowsShift, vectorBegin + end.rowsShift);
+        }
+        return Table::iterator(nullptr);
+    }
+
+    void Table::addColumn(const QString &name) noexcept {
+        this->data.insert(std::make_pair(name, std::vector<DataType*>{}));
+    }
+
+    Table::iterator::reference &Table::iterator::operator*() {
+        return this->row;
+    }
+
+    Table::iterator::pointer Table::iterator::operator->() {
+        return &this->row;
     }
 }
