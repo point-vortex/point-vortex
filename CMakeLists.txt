@@ -16,6 +16,9 @@ set(REQUIRED_LIBS_QUALIFIED Qt6::Core Qt6::Gui Qt6::Widgets Qt6::OpenGL)
 file(GLOB_RECURSE HEADERS "${PROJECT_SOURCE_DIR}/include/*.h")
 file(GLOB_RECURSE SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp")
 
+file(GLOB_RECURSE TEST_HEADERS "${PROJECT_SOURCE_DIR}/test/*.h")
+file(GLOB_RECURSE TEST_SOURCES "${PROJECT_SOURCE_DIR}/test/*.cpp")
+
 include_directories(${CMAKE_SOURCE_DIR}/include)
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
@@ -27,7 +30,7 @@ endif ()
 find_package(OpenGL REQUIRED)
 if (NOT WIN32) # TODO: change to if linux
     find_package(GLUT REQUIRED)
-endif()
+endif ()
 
 find_package(Qt${QT_VERSION} COMPONENTS ${REQUIRED_LIBS} REQUIRED)
 target_link_libraries(${PROJECT_NAME} ${REQUIRED_LIBS_QUALIFIED})
@@ -62,20 +65,51 @@ if (WIN32)
     endforeach (QT_LIB)
 endif ()
 
+# -------------------------------------------------- Google test
+if (ENABLE_GOOGLE_TEST)
+    set(GOOGLETEST_DIR "F:/proj/cpp/googletest-master")
+
+    message("Gtest dir: ${GOOGLETEST_DIR}")
+    if (EXISTS ${GOOGLETEST_DIR})
+        set(GTestSrc ${GOOGLETEST_DIR}/googletest)
+        set(GMockSrc ${GOOGLETEST_DIR}/googlemock)
+    elseif (UNIX AND EXISTS /usr/src/gtest)
+        set(GTestSrc /usr/src/gtest)
+        message(WARNING "Using gtest from system")
+        if (EXISTS /usr/src/gmock)
+            set(GMockSrc /usr/src/gmock)
+        endif ()
+    else ()
+        message(FATAL_ERROR "No googletest src dir found - set GOOGLETEST_DIR to enable!")
+    endif ()
+
+    set(GTestFiles ${GTestSrc}/src/gtest-all.cc)
+    set(GTestIncludes ${GTestSrc} ${GTestSrc}/include)
+    if (NOT ${GMockSrc} STREQUAL "")
+        list(APPEND GTestFiles ${GMockSrc}/src/gmock-all.cc)
+        list(APPEND GTestIncludes ${GMockSrc} ${GMockSrc}/include)
+    endif ()
+
+    include_directories(${GTestIncludes})
+
+    add_executable(${PROJECT_NAME}_test ${TEST_SOURCES} ${TEST_HEADERS} ${GTestFiles})
+    add_test(NAME ${PROJECT_NAME}_test COMMAND ${PROJECT_NAME}_test)
+    target_link_libraries(${PROJECT_NAME}_test PRIVATE Threads::Threads)
+endif ()
 
 # -------------------------------------------------- Compiling GLSL shaders
 if (${CMAKE_HOST_SYSTEM_PROCESSOR} STREQUAL "AMD64")
     find_program(GLSL_VALIDATOR NAMES glslangValidator PATH "$ENV{VULKAN_SDK}/Bin")
-else()
+else ()
     find_program(GLSL_VALIDATOR NAMES glslangValidator PATH "$ENV{VULKAN_SDK}/Bin32")
-endif()
+endif ()
 
 file(GLOB_RECURSE GLSL_SOURCE_FILES
         "shaders/*.frag"
         "shaders/*.vert"
         )
 
-foreach(GLSL ${GLSL_SOURCE_FILES})
+foreach (GLSL ${GLSL_SOURCE_FILES})
     get_filename_component(FILE_NAME ${GLSL} NAME)
     set(SPIRV "${PROJECT_BINARY_DIR}/shaders/${FILE_NAME}.spv")
     add_custom_command(
@@ -84,7 +118,7 @@ foreach(GLSL ${GLSL_SOURCE_FILES})
             COMMAND ${GLSL_VALIDATOR} -V ${GLSL} -o ${SPIRV}
             DEPENDS ${GLSL})
     list(APPEND SPIRV_BINARY_FILES ${SPIRV})
-endforeach(GLSL)
+endforeach (GLSL)
 
 add_custom_target(
         glsl_shaders
