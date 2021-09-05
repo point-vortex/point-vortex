@@ -15,9 +15,13 @@ set(REQUIRED_LIBS_QUALIFIED Qt6::Core Qt6::Gui Qt6::Widgets Qt6::OpenGL)
 
 file(GLOB_RECURSE HEADERS "${PROJECT_SOURCE_DIR}/include/*.h")
 file(GLOB_RECURSE SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp")
+# Exclude main.cpp from sources
+list(REMOVE_ITEM SOURCES "${PROJECT_SOURCE_DIR}/src/main.cpp")
+
+file(GLOB_RECURSE TEST_SOURCES "${PROJECT_SOURCE_DIR}/test/*.cpp")
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
-add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
+add_executable(${PROJECT_NAME} ${SOURCES} "${PROJECT_SOURCE_DIR}/src/main.cpp" ${HEADERS})
 
 if (NOT CMAKE_PREFIX_PATH)
     message(WARNING "CMAKE_PREFIX_PATH is not defined, you may need to set it "
@@ -27,7 +31,7 @@ endif ()
 find_package(OpenGL REQUIRED)
 if (NOT WIN32) # TODO: change to if linux
     find_package(GLUT REQUIRED)
-endif()
+endif ()
 
 find_package(Qt${QT_VERSION} COMPONENTS ${REQUIRED_LIBS} REQUIRED)
 target_link_libraries(${PROJECT_NAME} ${REQUIRED_LIBS_QUALIFIED})
@@ -62,20 +66,41 @@ if (WIN32)
     endforeach (QT_LIB)
 endif ()
 
+# -------------------------------------------------- Google test
+if (ENABLE_GOOGLE_TEST)
+    include(FetchContent)
+    FetchContent_Declare(
+            googletest
+            URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
+    )
+    # For Windows: Prevent overriding the parent project's compiler/linker settings
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    FetchContent_MakeAvailable(googletest)
+
+    # TODO: add SOURCES to compile
+    add_executable(${PROJECT_NAME}_test ${TEST_SOURCES})
+    target_link_libraries(
+            ${PROJECT_NAME}_test
+            gtest_main
+    )
+
+    include(GoogleTest)
+    gtest_discover_tests(${PROJECT_NAME}_test)
+endif ()
 
 # -------------------------------------------------- Compiling GLSL shaders
 if (${CMAKE_HOST_SYSTEM_PROCESSOR} STREQUAL "AMD64")
     find_program(GLSL_VALIDATOR NAMES glslangValidator PATH "$ENV{VULKAN_SDK}/Bin")
-else()
+else ()
     find_program(GLSL_VALIDATOR NAMES glslangValidator PATH "$ENV{VULKAN_SDK}/Bin32")
-endif()
+endif ()
 
 file(GLOB_RECURSE GLSL_SOURCE_FILES
         "shaders/*.frag"
         "shaders/*.vert"
         )
 
-foreach(GLSL ${GLSL_SOURCE_FILES})
+foreach (GLSL ${GLSL_SOURCE_FILES})
     get_filename_component(FILE_NAME ${GLSL} NAME)
     set(SPIRV "${PROJECT_BINARY_DIR}/shaders/${FILE_NAME}.spv")
     add_custom_command(
@@ -84,7 +109,7 @@ foreach(GLSL ${GLSL_SOURCE_FILES})
             COMMAND ${GLSL_VALIDATOR} -V ${GLSL} -o ${SPIRV}
             DEPENDS ${GLSL})
     list(APPEND SPIRV_BINARY_FILES ${SPIRV})
-endforeach(GLSL)
+endforeach (GLSL)
 
 add_custom_target(
         glsl_shaders
