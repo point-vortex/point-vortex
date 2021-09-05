@@ -15,12 +15,13 @@ set(REQUIRED_LIBS_QUALIFIED Qt6::Core Qt6::Gui Qt6::Widgets Qt6::OpenGL)
 
 file(GLOB_RECURSE HEADERS "${PROJECT_SOURCE_DIR}/include/*.h")
 file(GLOB_RECURSE SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp")
+# Exclude main.cpp from sources
+list(REMOVE_ITEM SOURCES "${PROJECT_SOURCE_DIR}/src/main.cpp")
 
-file(GLOB_RECURSE TEST_HEADERS "${PROJECT_SOURCE_DIR}/test/*.h")
 file(GLOB_RECURSE TEST_SOURCES "${PROJECT_SOURCE_DIR}/test/*.cpp")
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
-add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
+add_executable(${PROJECT_NAME} ${SOURCES} "${PROJECT_SOURCE_DIR}/src/main.cpp" ${HEADERS})
 
 if (NOT CMAKE_PREFIX_PATH)
     message(WARNING "CMAKE_PREFIX_PATH is not defined, you may need to set it "
@@ -67,34 +68,24 @@ endif ()
 
 # -------------------------------------------------- Google test
 if (ENABLE_GOOGLE_TEST)
-    set(GOOGLETEST_DIR "F:/proj/cpp/googletest-master")
+    include(FetchContent)
+    FetchContent_Declare(
+            googletest
+            URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
+    )
+    # For Windows: Prevent overriding the parent project's compiler/linker settings
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    FetchContent_MakeAvailable(googletest)
 
-    message("Gtest dir: ${GOOGLETEST_DIR}")
-    if (EXISTS ${GOOGLETEST_DIR})
-        set(GTestSrc ${GOOGLETEST_DIR}/googletest)
-        set(GMockSrc ${GOOGLETEST_DIR}/googlemock)
-    elseif (UNIX AND EXISTS /usr/src/gtest)
-        set(GTestSrc /usr/src/gtest)
-        message(WARNING "Using gtest from system")
-        if (EXISTS /usr/src/gmock)
-            set(GMockSrc /usr/src/gmock)
-        endif ()
-    else ()
-        message(FATAL_ERROR "No googletest src dir found - set GOOGLETEST_DIR to enable!")
-    endif ()
+    # TODO: add SOURCES to compile
+    add_executable(${PROJECT_NAME}_test ${TEST_SOURCES})
+    target_link_libraries(
+            ${PROJECT_NAME}_test
+            gtest_main
+    )
 
-    set(GTestFiles ${GTestSrc}/src/gtest-all.cc)
-    set(GTestIncludes ${GTestSrc} ${GTestSrc}/include)
-    if (NOT ${GMockSrc} STREQUAL "")
-        list(APPEND GTestFiles ${GMockSrc}/src/gmock-all.cc)
-        list(APPEND GTestIncludes ${GMockSrc} ${GMockSrc}/include)
-    endif ()
-
-    include_directories(${GTestIncludes})
-
-    add_executable(${PROJECT_NAME}_test ${TEST_SOURCES} ${TEST_HEADERS} ${GTestFiles})
-    add_test(NAME ${PROJECT_NAME}_test COMMAND ${PROJECT_NAME}_test)
-    target_link_libraries(${PROJECT_NAME}_test PRIVATE Threads::Threads)
+    include(GoogleTest)
+    gtest_discover_tests(${PROJECT_NAME}_test)
 endif ()
 
 # -------------------------------------------------- Compiling GLSL shaders
