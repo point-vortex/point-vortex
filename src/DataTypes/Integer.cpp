@@ -23,114 +23,114 @@
 #include "DataTypes/Integer.h"
 
 namespace DTypes {
-    Integer::Integer(int x) : x(x) {}
+    Integer::Integer(int x) noexcept: x(x) {}
 
-    Integer::Integer(const Integer &reference) : x(reference.x) {}
+    Integer::Integer(const Integer &reference) noexcept: x(reference.x) {}
 
-    Integer *Integer::copy() const {
+    Integer *Integer::copy() const noexcept {
         return new Integer(*this);
     }
 
-    int Integer::get() const {
+    int Integer::get() const noexcept {
         return this->x;
     }
 
-    Integer &Integer::set(int value) {
+    Integer &Integer::set(int value) noexcept {
         this->x = value;
         return *this;
     }
 
-    Integer::operator int() const {
+    Integer::operator int() const noexcept {
         return this->x;
     }
 
-    Integer::operator bool() const {
+    Integer::operator bool() const noexcept {
         return static_cast<bool>(this->x);
     }
 
-    bool Integer::operator==(const Integer &rhs) const {
+    bool Integer::operator==(const Integer &rhs) const noexcept {
         return this->x == rhs.x;
     }
 
-    bool Integer::operator!=(const Integer &rhs) const {
+    bool Integer::operator!=(const Integer &rhs) const noexcept {
         return this->x != rhs.x;
     }
 
-    bool Integer::operator<(const Integer &rhs) const {
+    bool Integer::operator<(const Integer &rhs) const noexcept {
         return this->x < rhs.x;
     }
 
-    bool Integer::operator>(const Integer &rhs) const {
+    bool Integer::operator>(const Integer &rhs) const noexcept {
         return this->x > rhs.x;
     }
 
-    bool Integer::operator<=(const Integer &rhs) const {
+    bool Integer::operator<=(const Integer &rhs) const noexcept {
         return this->x <= rhs.x;
     }
 
-    bool Integer::operator>=(const Integer &rhs) const {
+    bool Integer::operator>=(const Integer &rhs) const noexcept {
         return this->x >= rhs.x;
     }
 
-    Integer &Integer::operator++() {
+    Integer &Integer::operator++() noexcept {
         ++this->x;
         return *this;
     }
 
-    Integer Integer::operator++(int) {
+    Integer Integer::operator++(int) noexcept {
         Integer old = *this;
         ++this->x;
         return old;
     }
 
-    Integer &Integer::operator--() {
+    Integer &Integer::operator--() noexcept {
         --this->x;
         return *this;
     }
 
-    Integer Integer::operator--(int) {
+    Integer Integer::operator--(int) noexcept {
         Integer old = *this;
         --this->x;
         return old;
     }
 
-    Integer &Integer::operator+=(Integer &rhs) {
+    Integer &Integer::operator+=(Integer &rhs) noexcept {
         this->x += rhs.x;
         return *this;
     }
 
-    Integer &Integer::operator-=(Integer &rhs) {
+    Integer &Integer::operator-=(Integer &rhs) noexcept {
         this->x -= rhs.x;
         return *this;
     }
 
-    Integer &Integer::operator/=(Integer &rhs) {
+    Integer &Integer::operator/=(Integer &rhs) noexcept {
         this->x /= rhs.x;
         return *this;
     }
 
-    Integer &Integer::operator*=(Integer &rhs) {
+    Integer &Integer::operator*=(Integer &rhs) noexcept {
         this->x *= rhs.x;
         return *this;
     }
 
-    Integer operator+(Integer &lhs, Integer rhs) {
+    Integer operator+(Integer &lhs, Integer rhs) noexcept {
         return {lhs.x + rhs.x};
     }
 
-    Integer operator-(Integer &lhs, Integer rhs) {
+    Integer operator-(Integer &lhs, Integer rhs) noexcept {
         return {lhs.x - rhs.x};
     }
 
-    Integer operator*(Integer &lhs, Integer rhs) {
+    Integer operator*(Integer &lhs, Integer rhs) noexcept {
         return {lhs.x * rhs.x};
     }
 
-    Integer operator/(Integer &lhs, Integer rhs) {
+    Integer operator/(Integer &lhs, Integer rhs) noexcept {
         return {lhs.x / rhs.x};
     }
 
-    std::ostream &operator<<(std::ostream &os, const Integer &value) {
+    std::ostream &operator<<(std::ostream &os, const Integer &value) noexcept {
         os << value.x;
         return os;
     }

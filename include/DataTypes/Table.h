@@ -24,84 +24,26 @@
 #define POINT_VORTEX_TABLE_H
 
 #include <vector>
-#include <map>
-
+#include <set>
 #include <QString>
-
 #include "DataTypes/DataType.h"
 
 namespace DTypes {
     class Table : public DataType {
     public:
-        class iterator;
+        struct Row {
 
-        struct Row;
-    protected:
-        std::map<QString, std::vector<DataType *>> data;
-        size_t rowsSize;
+        };
+    private:
+        std::set<QString, std::vector<DataType*>> data;
+        std::size_t size;
     public:
-        explicit Table();
-        Table(const Table &reference);
-        ~Table() override = default;
+        Table();
+        Table(const Table& reference);
+        ~Table() = default;
     public:
-        iterator end() noexcept;
-        iterator begin() noexcept;
-    public:
-        void erase(size_t row) noexcept;
-        iterator erase(const iterator &position) noexcept;
-        iterator erase(const iterator &begin, const iterator &end) noexcept;
-    public:
-        void addColumn(const QString &name) noexcept;
-        void removeColumn(const QString &name) noexcept;
-    public:
-        void push_back(const Row &row);
-    public:
-        Row at(size_t position) const noexcept;
-    public:
-        [[nodiscard]] Table *copy() const override;
+        Table& push_back(const Row& row);
     };
-
-    namespace Table {
-        class iterator {
-            friend Table;
-        public:
-            using iterator_category = std::forward_iterator_tag;
-            using difference_type = std::ptrdiff_t;
-            using value_type = Row;
-            using pointer = Row *;
-            using reference = Row &;
-        private:
-            Table *table;
-            std::size_t rowsShift;
-            Row row;
-        private:
-            iterator(Table *ptr, std::size_t row = 0);
-        private:
-            inline void updateRow();
-        public:
-            reference operator*();
-            pointer operator->();
-            iterator &operator++();
-            const iterator operator++(int);
-            const iterator operator+=(std::size_t);
-            iterator &operator--();
-            const iterator operator--(int);
-            const iterator operator-=(std::size_t);
-
-            friend iterator operator+(const iterator &left, std::size_t right);
-            friend iterator operator-(const iterator &left, std::size_t right);
-            friend bool operator==(const iterator &left, const iterator &right);
-            friend bool operator!=(const iterator &left, const iterator &right);
-        };
-
-        struct Row : public std::map<const QString, DataType *const> {
-            friend iterator;
-            // std::map<QString, TYPE>
-            // TODO: add column type field
-        private:
-            std::size_t rowShift;
-        };
-    }
 }
 
 

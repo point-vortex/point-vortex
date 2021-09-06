@@ -34,35 +34,35 @@ namespace DTypes {
     private:
         bool x;
     public:
-        Boolean(bool x = false);
-        Boolean(const Boolean &reference);
-        ~Boolean() override = default;
+        Boolean(bool x = false) noexcept;
+        Boolean(const Boolean &reference) noexcept;
+        ~Boolean() noexcept override = default;
     public:
-        [[nodiscard]] Boolean *copy() const override;
+        [[nodiscard]] Boolean *copy() const noexcept override;
     public:
-        [[nodiscard]] virtual bool get() const;
-        virtual void set(bool x);
+        [[nodiscard]] virtual bool get() const noexcept;
+        virtual void set(bool x) noexcept;
     public:
-        operator bool() const;
+        operator bool() const noexcept;
     public:
-        bool operator==(const Boolean &rhs) const;
-        bool operator!=(const Boolean &rhs) const;
-        bool operator<(const Boolean &rhs) const;
-        bool operator>(const Boolean &rhs) const;
-        bool operator<=(const Boolean &rhs) const;
-        bool operator>=(const Boolean &rhs) const;
+        bool operator==(const Boolean &rhs) const noexcept;
+        bool operator!=(const Boolean &rhs) const noexcept;
+        bool operator<(const Boolean &rhs) const noexcept;
+        bool operator>(const Boolean &rhs) const noexcept;
+        bool operator<=(const Boolean &rhs) const noexcept;
+        bool operator>=(const Boolean &rhs) const noexcept;
     public:
-        Boolean& operator+=(Boolean& rhs);
-        Boolean& operator-=(Boolean& rhs);
-        Boolean& operator/=(Boolean& rhs);
-        Boolean& operator*=(Boolean& rhs);
+        Boolean& operator+=(Boolean& rhs) noexcept;
+        Boolean& operator-=(Boolean& rhs) noexcept;
+        Boolean& operator/=(Boolean& rhs) noexcept;
+        Boolean& operator*=(Boolean& rhs) noexcept;
     public:
-        friend Boolean operator+(Boolean& lhs, Boolean rhs);
-        friend Boolean operator-(Boolean& lhs, Boolean rhs);
-        friend Boolean operator*(Boolean& lhs, Boolean rhs);
-        friend Boolean operator/(Boolean& lhs, Boolean rhs);
+        friend Boolean operator+(Boolean& lhs, Boolean rhs) noexcept;
+        friend Boolean operator-(Boolean& lhs, Boolean rhs) noexcept;
+        friend Boolean operator*(Boolean& lhs, Boolean rhs) noexcept;
+        friend Boolean operator/(Boolean& lhs, Boolean rhs) noexcept;
     public:
-        friend std::ostream& operator<<(std::ostream& os, const Boolean& value);
+        friend std::ostream& operator<<(std::ostream& os, const Boolean& value) noexcept;
     };
 }
 

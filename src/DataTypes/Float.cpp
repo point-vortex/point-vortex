@@ -23,114 +23,115 @@
 #include "DataTypes/Float.h"
 
 namespace DTypes {
-    Float::Float(float x) : x(x) {}
+    Float::Float(float x) noexcept: x(x) {}
 
-    Float::Float(const Float &reference) : x(reference.x) {}
+    Float::Float(const Float &reference) noexcept: x(reference.x) {}
 
-    Float *Float::copy() const {
-        return new Float(*this);
+    Float *Float::copy() const noexcept {
+        return new Float(*this)
+        noexcept;
     }
 
-    float Float::get() const {
+    float Float::get() const noexcept {
         return this->x;
     }
 
-    Float &Float::set(float value) {
+    Float &Float::set(float value) noexcept {
         this->x = value;
         return *this;
     }
 
-    Float::operator float() const {
+    Float::operator float() const noexcept {
         return this->x;
     }
 
-    Float::operator bool() const {
+    Float::operator bool() const noexcept {
         return static_cast<bool>(this->x);
     }
 
-    bool Float::operator==(const Float &rhs) const {
+    bool Float::operator==(const Float &rhs) const noexcept {
         return this->x == rhs.x;
     }
 
-    bool Float::operator!=(const Float &rhs) const {
+    bool Float::operator!=(const Float &rhs) const noexcept {
         return this->x != rhs.x;
     }
 
-    bool Float::operator<(const Float &rhs) const {
+    bool Float::operator<(const Float &rhs) const noexcept {
         return this->x < rhs.x;
     }
 
-    bool Float::operator>(const Float &rhs) const {
+    bool Float::operator>(const Float &rhs) const noexcept {
         return this->x > rhs.x;
     }
 
-    bool Float::operator<=(const Float &rhs) const {
+    bool Float::operator<=(const Float &rhs) const noexcept {
         return this->x <= rhs.x;
     }
 
-    bool Float::operator>=(const Float &rhs) const {
+    bool Float::operator>=(const Float &rhs) const noexcept {
         return this->x >= rhs.x;
     }
 
-    Float &Float::operator++() {
+    Float &Float::operator++() noexcept {
         ++this->x;
         return *this;
     }
 
-    Float Float::operator++(int) {
+    Float Float::operator++(int) noexcept {
         Float old = *this;
         ++this->x;
         return old;
     }
 
-    Float &Float::operator--() {
+    Float &Float::operator--() noexcept {
         --this->x;
         return *this;
     }
 
-    Float Float::operator--(int) {
+    Float Float::operator--(int) noexcept {
         Float old = *this;
         --this->x;
         return old;
     }
 
-    Float &Float::operator+=(Float &rhs) {
+    Float &Float::operator+=(Float &rhs) noexcept {
         this->x += rhs.x;
         return *this;
     }
 
-    Float &Float::operator-=(Float &rhs) {
+    Float &Float::operator-=(Float &rhs) noexcept {
         this->x -= rhs.x;
         return *this;
     }
 
-    Float &Float::operator/=(Float &rhs) {
+    Float &Float::operator/=(Float &rhs) noexcept {
         this->x /= rhs.x;
         return *this;
     }
 
-    Float &Float::operator*=(Float &rhs) {
+    Float &Float::operator*=(Float &rhs) noexcept {
         this->x *= rhs.x;
         return *this;
     }
 
-    Float operator+(Float &lhs, Float rhs) {
+    Float operator+(Float &lhs, Float rhs) noexcept {
         return {lhs.x + rhs.x};
     }
 
-    Float operator-(Float &lhs, Float rhs) {
+    Float operator-(Float &lhs, Float rhs) noexcept {
         return {lhs.x - rhs.x};
     }
 
-    Float operator*(Float &lhs, Float rhs) {
+    Float operator*(Float &lhs, Float rhs) noexcept {
         return {lhs.x * rhs.x};
     }
 
-    Float operator/(Float &lhs, Float rhs) {
+    Float operator/(Float &lhs, Float rhs) noexcept {
         return {lhs.x / rhs.x};
     }
 
-    std::ostream &operator<<(std::ostream &os, const Float &value) {
+    std::ostream &operator<<(std::ostream &os, const Float &value) noexcept {
         os << value.x;
         return os;
     }

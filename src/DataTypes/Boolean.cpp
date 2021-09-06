@@ -23,87 +23,87 @@
 #include "DataTypes/Boolean.h"
 
 namespace DTypes {
-    Boolean::Boolean(bool x) : x(x) {}
+    Boolean::Boolean(bool x) noexcept: x(x) {}
 
-    Boolean::Boolean(const Boolean &reference) : x(reference.x) {}
+    Boolean::Boolean(const Boolean &reference) noexcept: x(reference.x) {}
 
-    Boolean *Boolean::copy() const {
+    Boolean *Boolean::copy() const noexcept {
         return new Boolean(*this);
     }
 
-    bool Boolean::get() const {
+    bool Boolean::get() const noexcept {
         return this->x;
     }
 
-    void Boolean::set(bool value) {
+    void Boolean::set(bool value) noexcept {
         this->x = value;
     }
 
-    Boolean::operator bool() const {
+    Boolean::operator bool() const noexcept {
         return this->x;
     }
 
-    bool Boolean::operator==(const Boolean &rhs) const {
+    bool Boolean::operator==(const Boolean &rhs) const noexcept {
         return this->x == rhs.x;
     }
 
-    bool Boolean::operator!=(const Boolean &rhs) const {
+    bool Boolean::operator!=(const Boolean &rhs) const noexcept {
         return this->x != rhs.x;
     }
 
-    bool Boolean::operator<(const Boolean &rhs) const {
+    bool Boolean::operator<(const Boolean &rhs) const noexcept {
         return this->x < rhs.x;
     }
 
-    bool Boolean::operator>(const Boolean &rhs) const {
+    bool Boolean::operator>(const Boolean &rhs) const noexcept {
         return this->x > rhs.x;
     }
 
-    bool Boolean::operator<=(const Boolean &rhs) const {
+    bool Boolean::operator<=(const Boolean &rhs) const noexcept {
         return this->x <= rhs.x;
     }
 
-    bool Boolean::operator>=(const Boolean &rhs) const {
+    bool Boolean::operator>=(const Boolean &rhs) const noexcept {
         return this->x >= rhs.x;
     }
 
-    Boolean &Boolean::operator+=(Boolean &rhs) {
+    Boolean &Boolean::operator+=(Boolean &rhs) noexcept {
         this->x += rhs.x;
         return *this;
     }
 
-    Boolean &Boolean::operator-=(Boolean &rhs) {
+    Boolean &Boolean::operator-=(Boolean &rhs) noexcept {
         this->x -= rhs.x;
         return *this;
     }
 
-    Boolean &Boolean::operator/=(Boolean &rhs) {
+    Boolean &Boolean::operator/=(Boolean &rhs) noexcept {
         this->x /= rhs.x;
         return *this;
     }
 
-    Boolean &Boolean::operator*=(Boolean &rhs) {
+    Boolean &Boolean::operator*=(Boolean &rhs) noexcept {
         this->x *= rhs.x;
         return *this;
     }
 
-    Boolean operator+(Boolean &lhs, Boolean rhs) {
+    Boolean operator+(Boolean &lhs, Boolean rhs) noexcept {
         return {static_cast<bool>(lhs.x + rhs.x)};
     }
 
-    Boolean operator-(Boolean &lhs, Boolean rhs) {
+    Boolean operator-(Boolean &lhs, Boolean rhs) noexcept {
         return {static_cast<bool>(lhs.x - rhs.x)};
     }
 
-    Boolean operator*(Boolean &lhs, Boolean rhs) {
+    Boolean operator*(Boolean &lhs, Boolean rhs) noexcept {
         return {static_cast<bool>(lhs.x * rhs.x)};
     }
 
-    Boolean operator/(Boolean &lhs, Boolean rhs) {
+    Boolean operator/(Boolean &lhs, Boolean rhs) noexcept {
         return {static_cast<bool>(lhs.x / rhs.x)};
     }
 
-    std::ostream &operator<<(std::ostream &os, const Boolean &value) {
+    std::ostream &operator<<(std::ostream &os, const Boolean &value) noexcept {
         os << value.x;
         return os;
     }

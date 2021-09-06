@@ -34,41 +34,41 @@ namespace DTypes {
     private:
         float x;
     public:
-        Float(float x = 0.0f);
-        Float(const Float& reference);
-        ~Float() = default;
+        Float(float x = 0.0f) noexcept;
+        Float(const Float& reference) noexcept;
+        ~Float() noexcept override = default;
     public:
-        Float *copy() const override;
+        Float *copy() const noexcept override;
     public:
-        [[nodiscard]] virtual float get() const;
-        virtual Float& set(float x);
+        [[nodiscard]] virtual float get() const noexcept;
+        virtual Float& set(float x) noexcept;
     public:
-        operator float() const;
-        operator bool() const;
+        operator float() const noexcept;
+        operator bool() const noexcept;
     public:
-        bool operator==(const Float &rhs) const;
-        bool operator!=(const Float &rhs) const;
-        bool operator<(const Float &rhs) const;
-        bool operator>(const Float &rhs) const;
-        bool operator<=(const Float &rhs) const;
-        bool operator>=(const Float &rhs) const;
+        bool operator==(const Float &rhs) const noexcept;
+        bool operator!=(const Float &rhs) const noexcept;
+        bool operator<(const Float &rhs) const noexcept;
+        bool operator>(const Float &rhs) const noexcept;
+        bool operator<=(const Float &rhs) const noexcept;
+        bool operator>=(const Float &rhs) const noexcept;
     public:
-        Float& operator++();
-        Float operator++(int);
-        Float& operator--();
-        Float operator--(int);
+        Float& operator++() noexcept;
+        Float operator++(int) noexcept;
+        Float& operator--() noexcept;
+        Float operator--(int) noexcept;
     public:
-        Float& operator+=(Float& rhs);
-        Float& operator-=(Float& rhs);
-        Float& operator/=(Float& rhs);
-        Float& operator*=(Float& rhs);
+        Float& operator+=(Float& rhs) noexcept;
+        Float& operator-=(Float& rhs) noexcept;
+        Float& operator/=(Float& rhs) noexcept;
+        Float& operator*=(Float& rhs) noexcept;
     public:
-        friend Float operator+(Float& lhs, Float rhs);
-        friend Float operator-(Float& lhs, Float rhs);
-        friend Float operator*(Float& lhs, Float rhs);
-        friend Float operator/(Float& lhs, Float rhs);
+        friend Float operator+(Float& lhs, Float rhs) noexcept;
+        friend Float operator-(Float& lhs, Float rhs) noexcept;
+        friend Float operator*(Float& lhs, Float rhs) noexcept;
+        friend Float operator/(Float& lhs, Float rhs) noexcept;
     public:
-        friend std::ostream& operator<<(std::ostream& os, const Float& value);
+        friend std::ostream& operator<<(std::ostream& os, const Float& value) noexcept;
     };
 }
 

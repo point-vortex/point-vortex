@@ -35,41 +35,41 @@ namespace DTypes {
     private:
         int x;
     public:
-        Integer(int x = 0);
-        Integer(const Integer& reference);
-        ~Integer() override = default;
+        Integer(int x = 0) noexcept;
+        Integer(const Integer &reference) noexcept;
+        ~Integer() noexcept override = default;
     public:
-        Integer *copy() const override;
+        Integer *copy() const noexcept override;
     public:
-        [[nodiscard]] virtual int get() const;
-        virtual Integer& set(int x);
+        [[nodiscard]] virtual int get() const noexcept;
+        virtual Integer &set(int x) noexcept;
     public:
-        operator int() const;
-        operator bool() const;
+        operator int() const noexcept;
+        operator bool() const noexcept;
     public:
-        bool operator==(const Integer &rhs) const;
-        bool operator!=(const Integer &rhs) const;
-        bool operator<(const Integer &rhs) const;
-        bool operator>(const Integer &rhs) const;
-        bool operator<=(const Integer &rhs) const;
-        bool operator>=(const Integer &rhs) const;
+        bool operator==(const Integer &rhs) const noexcept;
+        bool operator!=(const Integer &rhs) const noexcept;
+        bool operator<(const Integer &rhs) const noexcept;
+        bool operator>(const Integer &rhs) const noexcept;
+        bool operator<=(const Integer &rhs) const noexcept;
+        bool operator>=(const Integer &rhs) const noexcept;
     public:
-        Integer& operator++();
-        Integer operator++(int);
-        Integer& operator--();
-        Integer operator--(int);
+        Integer &operator++() noexcept;
+        Integer operator++(int) noexcept;
+        Integer &operator--() noexcept;
+        Integer operator--(int) noexcept;
     public:
-        Integer& operator+=(Integer& rhs);
-        Integer& operator-=(Integer& rhs);
-        Integer& operator/=(Integer& rhs);
-        Integer& operator*=(Integer& rhs);
+        Integer &operator+=(Integer &rhs) noexcept;
+        Integer &operator-=(Integer &rhs) noexcept;
+        Integer &operator/=(Integer &rhs) noexcept;
+        Integer &operator*=(Integer &rhs) noexcept;
     public:
-        friend Integer operator+(Integer& lhs, Integer rhs);
-        friend Integer operator-(Integer& lhs, Integer rhs);
-        friend Integer operator*(Integer& lhs, Integer rhs);
-        friend Integer operator/(Integer& lhs, Integer rhs);
+        friend Integer operator+(Integer &lhs, Integer rhs) noexcept;
+        friend Integer operator-(Integer &lhs, Integer rhs) noexcept;
+        friend Integer operator*(Integer &lhs, Integer rhs) noexcept;
+        friend Integer operator/(Integer &lhs, Integer rhs) noexcept;
     public:
-        friend std::ostream& operator<<(std::ostream& os, const Integer& value);
+        friend std::ostream &operator<<(std::ostream &os, const Integer &value) noexcept;
     };
 }
 
