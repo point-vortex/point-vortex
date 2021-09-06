@@ -24,25 +24,33 @@
 #define POINT_VORTEX_TABLE_H
 
 #include <vector>
-#include <set>
+#include <map>
 #include <QString>
 #include "DataTypes/DataType.h"
 
 namespace DTypes {
     class Table : public DataType {
     public:
-        struct Row {
 
+        struct Row {
+        public:
+            std::map<QString, DataType *> data;
+        public:
+            Row() = default;
         };
+
+    public:
+        using storage = std::map<QString, std::vector<DataType *>>;
     private:
-        std::set<QString, std::vector<DataType*>> data;
+        storage data;
         std::size_t size;
     public:
         Table();
-        Table(const Table& reference);
+        Table(const Table &reference);
         ~Table() = default;
     public:
-        Table& push_back(const Row& row);
+        Table &append(const Row &row);
+        Table &append(const Table &table);
     };
 }
 

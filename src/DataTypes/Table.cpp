@@ -22,15 +22,31 @@
 
 #include "DataTypes/Table.h"
 
-DTypes::Table::Table() {
+#include <utility>
 
-}
+namespace DTypes {
+    Table::Table() {
 
-DTypes::Table::Table(const DTypes::Table &reference) {
+    }
 
-}
+    Table::Table(const Table &reference) {
 
-DTypes::Table &DTypes::Table::push_back(const DTypes::Table::Row &row) {
+    }
 
-    return *this;
+    Table &Table::append(const Row &row) {
+        storage::iterator selfColumn;
+        for (const std::pair<QString, DataType*> rowColumn : row.data) {
+            selfColumn = this->data.find(rowColumn.first);
+            if (selfColumn != this->data.end()) {
+                selfColumn->second.push_back(rowColumn.second->copy()); //TODO: think about memory allocation.
+            } else {
+
+            }
+        }
+        return *this;
+    }
+
+    Table &Table::append(const Table &row) {
+        return *this;
+    }
 }
