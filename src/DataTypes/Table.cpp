@@ -37,6 +37,7 @@ namespace DTypes {
             column = this->createColumn(record.first, record.second->type());
             column->second.first.emplace_back(record.second->copy());
         }
+        ++this->size;
         return *this;
     }
 
@@ -50,6 +51,7 @@ namespace DTypes {
                 array.emplace_back(record->copy());
             }
         }
+        this->size += table.size;
         return *this;
     }
 
@@ -59,6 +61,7 @@ namespace DTypes {
             column = this->createColumn(record.first, record.second->type());
             column->second.first.emplace_back(record.second);
         }
+        ++this->size;
         return *this;
     }
 
@@ -72,6 +75,7 @@ namespace DTypes {
             array.reserve(array.size() + table.size);
             array.insert(array.end(), incomingArray.begin(), incomingArray.end());
         }
+        this->size += table.size;
         return *this;
     }
 
@@ -89,23 +93,36 @@ namespace DTypes {
             vector_t &array = column->second.first;
             // Clear column
             if (column->second.second != defVal->type()) {
-                for (DataType *field : array) {
-                    delete field;
-                }
-                array.erase(array.begin(), array.end());
+                this->dropColumn(column);
             } else {
                 return column;
             }
-        } else {
-            // Create column
-            auto result = this->data.insert(std::make_pair(name, std::make_pair(vector_t{}, defVal->type())));
-            column = result.first;
         }
+
+        // Create column
+        auto result = this->data.insert(std::make_pair(name, std::make_pair(vector_t{}, defVal->type())));
+        column = result.first;
 
         // Fill column with default value
         for (std::size_t i = 0; i < this->size; i++) {
             column->second.first.emplace_back(defVal->copy());
         }
         return column;
+    }
+
+    Table &Table::dropColumn(const QString& name) noexcept {
+        storage_t::iterator column = this->data.find(name);
+        return this->dropColumn(column);
+    }
+
+    Table &Table::dropColumn(const storage_t::iterator& column) {
+        if (column != this->data.end()) {
+            for (DataType* record : column->second.first) {
+                delete(record);
+            }
+            column->second.first.clear();
+            this->data.erase(column);
+        }
+        return *this;
     }
 }

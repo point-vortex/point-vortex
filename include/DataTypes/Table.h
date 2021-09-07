@@ -56,6 +56,10 @@ namespace DTypes {
         Table &append(const Table &table);
         Table &emplace(const Row &row);
         Table &emplace(const Table &table);
+    public:
+        Table& dropColumn(const QString& name) noexcept;
+    private:
+        Table& dropColumn(const storage_t::iterator& column);
     private:
         storage_t::iterator createColumn(const QString &name, const TYPES &type);
         storage_t::iterator createColumn(const QString &name, const DataType *defVal);
