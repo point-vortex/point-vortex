@@ -31,6 +31,10 @@ namespace DTypes {
         return new Boolean(*this);
     }
 
+    TYPES Boolean::type() const noexcept {
+        return TYPES::BOOLEAN;
+    }
+
     bool Boolean::get() const noexcept {
         return this->x;
     }

@@ -25,8 +25,9 @@
 
 #include <vector>
 #include <map>
+#include <utility>
 #include <QString>
-#include "DataTypes/DataType.h"
+#include "DataTypes/DataTypes.h"
 
 namespace DTypes {
     class Table : public DataType {
@@ -40,9 +41,11 @@ namespace DTypes {
         };
 
     public:
-        using storage = std::map<QString, std::vector<DataType *>>;
+        using vector_t = std::vector<DataType *>;
+        using map_item_t = std::pair<std::vector<DataType *>, TYPES>;
+        using storage_t = std::map<QString, map_item_t>;
     private:
-        storage data;
+        storage_t data;
         std::size_t size;
     public:
         Table();
@@ -51,6 +54,11 @@ namespace DTypes {
     public:
         Table &append(const Row &row);
         Table &append(const Table &table);
+        Table &emplace(const Row &row);
+        Table &emplace(const Table &table);
+    private:
+        storage_t::iterator createColumn(const QString &name, const TYPES &type);
+        storage_t::iterator createColumn(const QString &name, const DataType *defVal);
     };
 }
 

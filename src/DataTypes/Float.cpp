@@ -32,6 +32,10 @@ namespace DTypes {
         noexcept;
     }
 
+    TYPES Float::type() const noexcept {
+        return TYPES::FLOAT;
+    }
+
     float Float::get() const noexcept {
         return this->x;
     }

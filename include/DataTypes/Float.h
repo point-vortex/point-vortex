@@ -23,6 +23,8 @@
 #ifndef POINT_VORTEX_FLOAT_H
 #define POINT_VORTEX_FLOAT_H
 
+#include <ostream>
+
 #include "DataTypes/DataType.h"
 
 namespace DTypes {
@@ -31,6 +33,8 @@ namespace DTypes {
      * @author Danil Andreev
      */
     class Float : public DataType {
+    public:
+        const static TYPES static_type = TYPES::INTEGER;
     private:
         float x;
     public:
@@ -39,6 +43,8 @@ namespace DTypes {
         ~Float() noexcept override = default;
     public:
         Float *copy() const noexcept override;
+    public:
+        TYPES type() const noexcept override;
     public:
         [[nodiscard]] virtual float get() const noexcept;
         virtual Float& set(float x) noexcept;

@@ -20,36 +20,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef POINT_VORTEX_DATATYPE_H
-#define POINT_VORTEX_DATATYPE_H
+#ifndef POINT_VORTEX_DATATYPES_H
+#define POINT_VORTEX_DATATYPES_H
 
-#include "utils/ICopyable.h"
+#include <map>
 
+#include "Integer.h"
+#include "Float.h"
+#include "Boolean.h"
 
 namespace DTypes {
-    enum class TYPES {
-        UNKNOWN,
-        INTEGER,
-        FLOAT,
-        BOOLEAN,
-        STRING,
-    };
-
-    class Integer;
-
-    class Float;
-
-    class Boolean;
-
-    class DataType : public utils::ICopyable {
-    public:
-        const static TYPES static_type = TYPES::UNKNOWN;
-    public:
-        virtual ~DataType() = default;
-        [[nodiscard]] DataType *copy() const override = 0;
-    public:
-        virtual TYPES type() const noexcept { return TYPES::UNKNOWN; }
-    };
+    //TODO: cleanup memory on terminating.
+    std::map<TYPES, const DataType * const> DTProto = {
+            std::make_pair(Integer::static_type, new Integer()),
+            std::make_pair(Float::static_type, new Float()),
+            std::make_pair(Boolean::static_type, new Boolean()),
+    }
 }
 
-#endif //POINT_VORTEX_DATATYPE_H
+#endif //POINT_VORTEX_DATATYPES_H

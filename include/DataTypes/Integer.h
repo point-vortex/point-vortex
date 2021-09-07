@@ -32,6 +32,8 @@ namespace DTypes {
      * @author Danil Andreev
      */
     class Integer : public DataType {
+    public:
+        const static TYPES static_type = TYPES::INTEGER;
     private:
         int x;
     public:
@@ -40,6 +42,8 @@ namespace DTypes {
         ~Integer() noexcept override = default;
     public:
         Integer *copy() const noexcept override;
+    public:
+        TYPES type() const noexcept override;
     public:
         [[nodiscard]] virtual int get() const noexcept;
         virtual Integer &set(int x) noexcept;

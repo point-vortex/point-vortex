@@ -23,6 +23,8 @@
 #ifndef POINT_VORTEX_BOOLEAN_H
 #define POINT_VORTEX_BOOLEAN_H
 
+#include <ostream>
+
 #include "DataTypes/DataType.h"
 
 namespace DTypes {
@@ -31,6 +33,8 @@ namespace DTypes {
      * @author Danil Andreev
      */
     class Boolean : public DataType {
+    public:
+        const static TYPES static_type = TYPES::BOOLEAN;
     private:
         bool x;
     public:
@@ -39,6 +43,8 @@ namespace DTypes {
         ~Boolean() noexcept override = default;
     public:
         [[nodiscard]] Boolean *copy() const noexcept override;
+    public:
+        TYPES type() const noexcept override;
     public:
         [[nodiscard]] virtual bool get() const noexcept;
         virtual void set(bool x) noexcept;
