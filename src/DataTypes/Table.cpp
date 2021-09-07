@@ -23,12 +23,17 @@
 #include "DataTypes/Table.h"
 
 namespace DTypes {
-    Table::Table() : size(0) {
+    Table::Table() : size(0) {}
 
+    Table::Table(const Table &reference) : size(reference.size), data() {
+        this->append(reference);
     }
 
-    Table::Table(const Table &reference) {
-
+    Table::~Table() {
+        storage_t::iterator column = this->data.begin();
+        while (column != this->data.end()) {
+            column = this->dropColumn(column);
+        }
     }
 
     Table &Table::append(const Row &row) {
@@ -45,9 +50,9 @@ namespace DTypes {
         storage_t::iterator column;
         for (const std::pair<QString, map_item_t> incomingColumn : table.data) {
             column = this->createColumn(incomingColumn.first, incomingColumn.second.second);
-            vector_t & array = column->second.first;
+            vector_t &array = column->second.first;
             array.reserve(array.size() + table.size);
-            for (DataType* record : incomingColumn.second.first) {
+            for (DataType *record : incomingColumn.second.first) {
                 array.emplace_back(record->copy());
             }
         }
@@ -69,13 +74,34 @@ namespace DTypes {
         storage_t::iterator column;
         for (const std::pair<QString, map_item_t> incomingColumn : table.data) {
             column = this->createColumn(incomingColumn.first, incomingColumn.second.second);
-            vector_t & array = column->second.first;
-            const vector_t & incomingArray = incomingColumn.second.first;
+            vector_t &array = column->second.first;
+            const vector_t &incomingArray = incomingColumn.second.first;
 
             array.reserve(array.size() + table.size);
             array.insert(array.end(), incomingArray.begin(), incomingArray.end());
         }
         this->size += table.size;
+        return *this;
+    }
+
+    Table::storage_t::iterator Table::dropColumn(const storage_t::iterator &column) noexcept {
+        if (column != this->data.end()) {
+            for (DataType *record : column->second.first) {
+                delete (record);
+            }
+            column->second.first.clear();
+            return this->data.erase(column);
+        }
+        return column;
+    }
+
+    Table &Table::addColumn(const QString &name, const TYPES &type) {
+        this->createColumn(name, type);
+        return *this;
+    }
+
+    Table &Table::addColumn(const QString &name, const DataType *defVal) noexcept {
+        this->createColumn(name, defVal);
         return *this;
     }
 
@@ -87,7 +113,7 @@ namespace DTypes {
         return this->createColumn(name, prototype->second);
     }
 
-    Table::storage_t::iterator Table::createColumn(const QString &name, const DataType *defVal) {
+    Table::storage_t::iterator Table::createColumn(const QString &name, const DataType *defVal) noexcept {
         storage_t::iterator column;
         if (column != this->data.end()) {
             vector_t &array = column->second.first;
@@ -110,19 +136,9 @@ namespace DTypes {
         return column;
     }
 
-    Table &Table::dropColumn(const QString& name) noexcept {
+    Table &Table::dropColumn(const QString &name) noexcept {
         storage_t::iterator column = this->data.find(name);
-        return this->dropColumn(column);
-    }
-
-    Table &Table::dropColumn(const storage_t::iterator& column) {
-        if (column != this->data.end()) {
-            for (DataType* record : column->second.first) {
-                delete(record);
-            }
-            column->second.first.clear();
-            this->data.erase(column);
-        }
+        this->dropColumn(column);
         return *this;
     }
 }

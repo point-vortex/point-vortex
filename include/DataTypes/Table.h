@@ -40,6 +40,9 @@ namespace DTypes {
             Row() = default;
         };
 
+        class const_iterator {};
+        class iterator : public const_iterator {};
+
     public:
         using vector_t = std::vector<DataType *>;
         using map_item_t = std::pair<std::vector<DataType *>, TYPES>;
@@ -50,7 +53,7 @@ namespace DTypes {
     public:
         Table();
         Table(const Table &reference);
-        ~Table() = default;
+        ~Table() override;
     public:
         Table &append(const Row &row);
         Table &append(const Table &table);
@@ -58,11 +61,21 @@ namespace DTypes {
         Table &emplace(const Table &table);
     public:
         Table& dropColumn(const QString& name) noexcept;
+        Table& addColumn(const QString &name, const TYPES &type);
+        Table& addColumn(const QString &name, const DataType *defaultValue) noexcept;
+    public:
+        iterator erase(const const_iterator& position) noexcept;
+        iterator erase(const const_iterator& from, const const_iterator to) noexcept;
+    public:
+        iterator begin() noexcept;
+        iterator end() noexcept;
+        const_iterator cbegin() noexcept;
+        const_iterator cend() noexcept;
     private:
-        Table& dropColumn(const storage_t::iterator& column);
+        storage_t::iterator dropColumn(const storage_t::iterator& column) noexcept;
     private:
         storage_t::iterator createColumn(const QString &name, const TYPES &type);
-        storage_t::iterator createColumn(const QString &name, const DataType *defVal);
+        storage_t::iterator createColumn(const QString &name, const DataType *defaultValue) noexcept;
     };
 }
 
