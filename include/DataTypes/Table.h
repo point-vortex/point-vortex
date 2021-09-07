@@ -33,17 +33,51 @@ namespace DTypes {
     class Table : public DataType {
     public:
 
-        struct Row {
+        class Row : protected std::map<QString, DataType *> {
         public:
-            std::map<QString, DataType *> data;
+            ~Row();
         public:
-            Row() = default;
+            using std::map<QString, DataType *>::insert;
+            using std::map<QString, DataType *>::clear;
+            using std::map<QString, DataType *>::erase;
+            using std::map<QString, DataType *>::contains;
+            using std::map<QString, DataType *>::size;
+            using std::map<QString, DataType *>::at;
+            using std::map<QString, DataType *>::begin;
+            using std::map<QString, DataType *>::end;
+            using std::map<QString, DataType *>::operator[];
         };
 
-        class const_iterator {};
-        class iterator : public const_iterator {};
+        class const_iterator {
+            friend Table;
+        private:
+            Table *target;
+            std::size_t shift;
+            Row row;
+        private:
+            explicit const_iterator(Table *target, std::size_t shift = 0);
+        public:
+            const_iterator &operator++() noexcept;
+            const_iterator operator++(int) noexcept;
+            const_iterator &operator--() noexcept;
+            const_iterator operator--(int) noexcept;
+        public:
+            const_iterator &operator+=(std::size_t x) noexcept;
+            const_iterator operator-=(std::size_t x) noexcept;
+        public:
+            Row &operator*() noexcept;
+            Row *operator->() noexcept;
+        };
 
-    public:
+        class iterator : public const_iterator {
+            friend Table;
+        private:
+            explicit iterator(Table *target, std::size_t shift = 0);
+        };
+
+        friend const_iterator;
+        friend iterator;
+    protected:
         using vector_t = std::vector<DataType *>;
         using map_item_t = std::pair<std::vector<DataType *>, TYPES>;
         using storage_t = std::map<QString, map_item_t>;
@@ -60,19 +94,19 @@ namespace DTypes {
         Table &emplace(const Row &row);
         Table &emplace(const Table &table);
     public:
-        Table& dropColumn(const QString& name) noexcept;
-        Table& addColumn(const QString &name, const TYPES &type);
-        Table& addColumn(const QString &name, const DataType *defaultValue) noexcept;
+        Table &dropColumn(const QString &name) noexcept;
+        Table &addColumn(const QString &name, const TYPES &type);
+        Table &addColumn(const QString &name, const DataType *defaultValue) noexcept;
     public:
-        iterator erase(const const_iterator& position) noexcept;
-        iterator erase(const const_iterator& from, const const_iterator to) noexcept;
+        iterator erase(const const_iterator &position) noexcept;
+        iterator erase(const const_iterator &from, const const_iterator& to) noexcept;
     public:
         iterator begin() noexcept;
         iterator end() noexcept;
         const_iterator cbegin() noexcept;
         const_iterator cend() noexcept;
     private:
-        storage_t::iterator dropColumn(const storage_t::iterator& column) noexcept;
+        storage_t::iterator dropColumn(const storage_t::iterator &column) noexcept;
     private:
         storage_t::iterator createColumn(const QString &name, const TYPES &type);
         storage_t::iterator createColumn(const QString &name, const DataType *defaultValue) noexcept;

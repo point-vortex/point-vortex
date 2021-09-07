@@ -23,6 +23,7 @@
 #include "DataTypes/Table.h"
 
 namespace DTypes {
+// ----------------------------------------------------------------------------------------------------------- TABLE ---
     Table::Table() : size(0) {}
 
     Table::Table(const Table &reference) : size(reference.size), data() {
@@ -38,7 +39,7 @@ namespace DTypes {
 
     Table &Table::append(const Row &row) {
         storage_t::iterator column;
-        for (const std::pair<QString, DataType *> record : row.data) {
+        for (const std::pair<QString, DataType *> record : row) {
             column = this->createColumn(record.first, record.second->type());
             column->second.first.emplace_back(record.second->copy());
         }
@@ -62,7 +63,7 @@ namespace DTypes {
 
     Table &Table::emplace(const Table::Row &row) {
         storage_t::iterator column;
-        for (const std::pair<QString, DataType *> record : row.data) {
+        for (const std::pair<QString, DataType *> record : row) {
             column = this->createColumn(record.first, record.second->type());
             column->second.first.emplace_back(record.second);
         }
@@ -141,4 +142,52 @@ namespace DTypes {
         this->dropColumn(column);
         return *this;
     }
+
+    Table::const_iterator Table::cbegin() noexcept {
+        return Table::const_iterator(this, 0);
+    }
+
+    Table::const_iterator Table::cend() noexcept {
+        return Table::const_iterator(this, this->size);
+    }
+
+    Table::iterator Table::begin() noexcept {
+        return Table::iterator(this, 0);
+    }
+
+    Table::iterator Table::end() noexcept {
+        return Table::iterator(this, this->size);
+    }
+
+    Table::iterator Table::erase(const Table::const_iterator &from, const Table::const_iterator &to) noexcept {
+        for (const std::pair<QString, Table::map_item_t> &column: this->data) {
+            
+        }
+        return Table::iterator(nullptr); //TODO: finish return
+    }
+
+    Table::iterator Table::erase(const Table::const_iterator &position) noexcept {
+        return this->erase(position, position + 1);
+    }
+
+
+// ------------------------------------------------------------------------------------------------------------- ROW ---
+    Table::Row::~Row() {
+        for (const std::pair<QString, DataType *> record: *this) {
+            delete record.second;
+        }
+    }
+
+// -------------------------------------------------------------------------------------------------- CONST ITERATOR ---
+    Table::const_iterator::const_iterator(Table *target, std::size_t shift) : target(target), shift(shift), row() {
+        if (target->size < shift) {
+            for (const std::pair<QString, Table::map_item_t> &column: target->data) {
+                this->row.insert(std::make_pair(column.first, column.second.first.at(shift)));
+            }
+        }
+    }
+
+// -------------------------------------------------------------------------------------------------------- ITERATOR ---
+    Table::iterator::iterator(Table *target, std::size_t shift) : const_iterator(target, shift) {}
 }
+
