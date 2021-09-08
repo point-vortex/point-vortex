@@ -20,19 +20,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-//
-// Created by Denis Afendikov on 05.09.2021.
-//
-
 #include <gtest/gtest.h>
 #include <DataTypes/Table.h>
 
-// Demonstrate some basic assertions.
 TEST(DTypes_Table, Creation) {
-    DTypes::Table table{};
+    auto executor = []() {
+        DTypes::Table table{};
+    };
 
-//	// Expect two strings not to be equal.
-//	EXPECT_STRNE("hello", "world");
-//	// Expect equality.
-//	EXPECT_EQ(7 * 6, 42);
+    ASSERT_EXIT(
+            (executor(), exit(0)),
+            ::testing::ExitedWithCode(0),
+            ".*");
 }
