@@ -84,6 +84,17 @@ int main(int argc, char *argv[]) {
     std::cout << "table3t4" << std::endl;
     table3.print(std::cout);
 
+    DTypes::Table* table4 = new DTypes::Table();
+    table4->append(table3);
+    table4->append(table2);
+    std::cout << "table4t1" << std::endl;
+    table4->print(std::cout);
+
+    std::cout << "table4t2 (t3 exists)" << std::endl;
+    delete table4;
+    table3.print(std::cout);
+
+
     signal(SIGINT, handleSIGINT);
 
     QApplication a(argc, argv);

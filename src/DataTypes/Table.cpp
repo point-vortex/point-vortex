@@ -42,7 +42,7 @@ namespace DTypes {
 
     Table &Table::append(const Row &row) {
         storage_t::iterator column;
-        for (const std::pair<QString, DataType *> record: row) {
+        for (const std::pair<const QString, DataType *>& record: row) {
             column = this->createColumn(record.first, record.second->type());
             column->second.first.emplace_back(record.second->copy());
         }
@@ -53,7 +53,7 @@ namespace DTypes {
 
     Table &Table::append(const Table &table) {
         storage_t::iterator column;
-        for (const std::pair<QString, map_item_t> incomingColumn: table.data) {
+        for (const std::pair<const QString, map_item_t>& incomingColumn: table.data) {
             column = this->createColumn(incomingColumn.first, incomingColumn.second.second);
             vector_t &array = column->second.first;
             array.reserve(array.size() + table.size);
@@ -68,7 +68,7 @@ namespace DTypes {
 
     Table &Table::emplace(const Table::Row &row) {
         storage_t::iterator column;
-        for (const std::pair<QString, DataType *> record: row) {
+        for (const std::pair<const QString, DataType *>& record: row) {
             column = this->createColumn(record.first, record.second->type());
             column->second.first.emplace_back(record.second);
         }
@@ -79,7 +79,7 @@ namespace DTypes {
 
     Table &Table::emplace(const Table &table) {
         storage_t::iterator column;
-        for (const std::pair<QString, map_item_t> incomingColumn: table.data) {
+        for (const std::pair<const QString, map_item_t>& incomingColumn: table.data) {
             column = this->createColumn(incomingColumn.first, incomingColumn.second.second);
             vector_t &array = column->second.first;
             const vector_t &incomingArray = incomingColumn.second.first;
@@ -144,14 +144,14 @@ namespace DTypes {
         return column;
     }
 
-    void Table::syncColumn(const storage_t::iterator& column) noexcept {
+    void Table::syncColumn(const storage_t::iterator &column) noexcept {
         auto defVal = DTProto.find(column->second.second);
         if (defVal == DTProto.end()) {
             //TODO: throw an error
         }
 
 
-        vector_t& array = column->second.first;
+        vector_t &array = column->second.first;
         if (array.size() < this->size) {
             array.reserve(this->size);
             while (array.size() < this->size) {
@@ -191,10 +191,15 @@ namespace DTypes {
     Table::iterator Table::erase(const Table::const_iterator &from, const Table::const_iterator &to) noexcept {
         if (from.shift >= to.shift) return Table::iterator(this, from.shift);
 
-        for (std::pair<QString, Table::map_item_t> column: this->data) { //TODO: fix issue with vector copying in each similar statement.
+        for (std::pair<const QString, map_item_t> & column : this->data) {
             vector_t &array = column.second.first;
-            vector_t::iterator begin = array.begin();
-            array.erase(begin + static_cast<long long>(from.shift), begin + static_cast<long long>(to.shift));
+            vector_t::iterator arrayBegin = array.begin();
+            auto start = arrayBegin + static_cast<long long>(from.shift);
+            auto finish = arrayBegin + static_cast<long long>(to.shift);
+            for (auto record = start; record != finish; record++) {
+                delete *record.base();
+            }
+            array.erase(start, finish);
         }
         this->size -= to.shift - from.shift;
         return Table::iterator(this, from.shift); //TODO: finish return
@@ -209,15 +214,11 @@ namespace DTypes {
         for (auto column : this->data) {
             vector_t &array = column.second.first;
             os << column.first.toStdString();
-//            for (auto record : array) {
-//                os << " ";
-//                record->print(os);
-//            }
-            for (std::size_t i = 0; i < this->size; i++) {
+            for (auto record : array) {
                 os << " ";
-                array.at(i)->print(os);
+                record->print(os);
             }
-            os << "csize(" << array.size() << ")" << std::endl;
+            os << std::endl;
         }
         return os;
     }
