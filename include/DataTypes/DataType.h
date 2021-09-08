@@ -25,6 +25,7 @@
 
 #include "utils/ICopyable.h"
 
+#include <ostream>
 
 namespace DTypes {
     enum class TYPES {
@@ -49,6 +50,7 @@ namespace DTypes {
         [[nodiscard]] DataType *copy() const override = 0;
     public:
         virtual TYPES type() const noexcept { return TYPES::UNKNOWN; }
+        virtual std::ostream& print(std::ostream& os) const noexcept = 0;
     };
 }
 

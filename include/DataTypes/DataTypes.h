@@ -23,19 +23,12 @@
 #ifndef POINT_VORTEX_DATATYPES_H
 #define POINT_VORTEX_DATATYPES_H
 
-#include <map>
-
 #include "Integer.h"
 #include "Float.h"
 #include "Boolean.h"
 
 namespace DTypes {
-    //TODO: cleanup memory on terminating.
-    std::map<TYPES, const DataType * const> DTProto = {
-            std::make_pair(Integer::static_type, new Integer()),
-            std::make_pair(Float::static_type, new Float()),
-            std::make_pair(Boolean::static_type, new Boolean()),
-    };
+    typedef std::map<TYPES, const DataType * const> DTProto_t;
 }
 
 #endif //POINT_VORTEX_DATATYPES_H

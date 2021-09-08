@@ -110,7 +110,11 @@ namespace DTypes {
     }
 
     std::ostream &operator<<(std::ostream &os, const Boolean &value) noexcept {
-        os << value.x;
+        return value.print(os);
+    }
+
+    std::ostream &Boolean::print(std::ostream& os) const noexcept {
+        os << this->x;
         return os;
     }
 }

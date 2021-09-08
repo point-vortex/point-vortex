@@ -137,7 +137,11 @@ namespace DTypes {
     }
 
     std::ostream &operator<<(std::ostream &os, const Integer &value) noexcept {
-        os << value.x;
+        return value.print(os);
+    }
+
+    std::ostream &Integer::print(std::ostream &os) const noexcept {
+        os << this->x;
         return os;
     }
 }

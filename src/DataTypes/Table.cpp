@@ -22,7 +22,10 @@
 
 #include "DataTypes/Table.h"
 
+
 namespace DTypes {
+    extern DTProto_t DTProto;
+
 // ----------------------------------------------------------------------------------------------------------- TABLE ---
     Table::Table() : size(0) {}
 
@@ -44,6 +47,7 @@ namespace DTypes {
             column->second.first.emplace_back(record.second->copy());
         }
         ++this->size;
+        this->syncAllColumns();
         return *this;
     }
 
@@ -58,6 +62,7 @@ namespace DTypes {
             }
         }
         this->size += table.size;
+        this->syncAllColumns();
         return *this;
     }
 
@@ -68,6 +73,7 @@ namespace DTypes {
             column->second.first.emplace_back(record.second);
         }
         ++this->size;
+        this->syncAllColumns();
         return *this;
     }
 
@@ -82,6 +88,7 @@ namespace DTypes {
             array.insert(array.end(), incomingArray.begin(), incomingArray.end());
         }
         this->size += table.size;
+        this->syncAllColumns();
         return *this;
     }
 
@@ -115,7 +122,7 @@ namespace DTypes {
     }
 
     Table::storage_t::iterator Table::createColumn(const QString &name, const DataType *defVal) noexcept {
-        storage_t::iterator column;
+        storage_t::iterator column = this->data.find(name);
         if (column != this->data.end()) {
             vector_t &array = column->second.first;
             // Clear column
@@ -135,6 +142,28 @@ namespace DTypes {
             column->second.first.emplace_back(defVal->copy());
         }
         return column;
+    }
+
+    void Table::syncColumn(const storage_t::iterator& column) noexcept {
+        auto defVal = DTProto.find(column->second.second);
+        if (defVal == DTProto.end()) {
+            //TODO: throw an error
+        }
+
+
+        vector_t& array = column->second.first;
+        if (array.size() < this->size) {
+            array.reserve(this->size);
+            while (array.size() < this->size) {
+                array.push_back(defVal->second->copy());
+            }
+        }
+    }
+
+    void Table::syncAllColumns() noexcept {
+        for (storage_t::iterator column = this->data.begin(); column != this->data.end(); column++) {
+            this->syncColumn(column);
+        }
     }
 
     Table &Table::dropColumn(const QString &name) noexcept {
@@ -174,6 +203,23 @@ namespace DTypes {
         return this->erase(position, position + 1);
     }
 
+    std::ostream &Table::print(std::ostream &os) const noexcept {
+        //TODO: rewrite with self iterators
+        for (auto column : this->data) {
+            vector_t &array = column.second.first;
+            os << column.first.toStdString();
+            for (auto record : array) {
+                os << " ";
+                record->print(os);
+            }
+            os << std::endl;
+        }
+        return os;
+    }
+
+    Table *Table::copy() const {
+        return new Table(*this);
+    }
 
 // ------------------------------------------------------------------------------------------------------------- ROW ---
     Table::Row::~Row() {

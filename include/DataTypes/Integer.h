@@ -74,6 +74,7 @@ namespace DTypes {
         friend Integer operator/(Integer &lhs, Integer rhs) noexcept;
     public:
         friend std::ostream &operator<<(std::ostream &os, const Integer &value) noexcept;
+        std::ostream& print(std::ostream& os) const noexcept override;
     };
 }
 

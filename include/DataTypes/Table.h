@@ -119,6 +119,12 @@ namespace DTypes {
     private:
         storage_t::iterator createColumn(const QString &name, const TYPES &type);
         storage_t::iterator createColumn(const QString &name, const DataType *defaultValue) noexcept;
+        void syncColumn(const storage_t::iterator& column) noexcept;
+        inline void syncAllColumns() noexcept;
+    public: //TODO: add ifdef debug
+        std::ostream& print(std::ostream& os) const noexcept override;
+    public:
+        Table * copy() const override;
     };
 }
 

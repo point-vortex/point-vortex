@@ -39,7 +39,7 @@ namespace DTypes {
         float x;
     public:
         Float(float x = 0.0f) noexcept;
-        Float(const Float& reference) noexcept;
+        Float(const Float &reference) noexcept;
         ~Float() noexcept override = default;
     public:
         Float *copy() const noexcept override;
@@ -47,7 +47,7 @@ namespace DTypes {
         TYPES type() const noexcept override;
     public:
         [[nodiscard]] virtual float get() const noexcept;
-        virtual Float& set(float x) noexcept;
+        virtual Float &set(float x) noexcept;
     public:
         operator float() const noexcept;
         operator bool() const noexcept;
@@ -59,22 +59,23 @@ namespace DTypes {
         bool operator<=(const Float &rhs) const noexcept;
         bool operator>=(const Float &rhs) const noexcept;
     public:
-        Float& operator++() noexcept;
+        Float &operator++() noexcept;
         Float operator++(int) noexcept;
-        Float& operator--() noexcept;
+        Float &operator--() noexcept;
         Float operator--(int) noexcept;
     public:
-        Float& operator+=(Float& rhs) noexcept;
-        Float& operator-=(Float& rhs) noexcept;
-        Float& operator/=(Float& rhs) noexcept;
-        Float& operator*=(Float& rhs) noexcept;
+        Float &operator+=(Float &rhs) noexcept;
+        Float &operator-=(Float &rhs) noexcept;
+        Float &operator/=(Float &rhs) noexcept;
+        Float &operator*=(Float &rhs) noexcept;
     public:
-        friend Float operator+(Float& lhs, Float rhs) noexcept;
-        friend Float operator-(Float& lhs, Float rhs) noexcept;
-        friend Float operator*(Float& lhs, Float rhs) noexcept;
-        friend Float operator/(Float& lhs, Float rhs) noexcept;
+        friend Float operator+(Float &lhs, Float rhs) noexcept;
+        friend Float operator-(Float &lhs, Float rhs) noexcept;
+        friend Float operator*(Float &lhs, Float rhs) noexcept;
+        friend Float operator/(Float &lhs, Float rhs) noexcept;
     public:
-        friend std::ostream& operator<<(std::ostream& os, const Float& value) noexcept;
+        friend std::ostream &operator<<(std::ostream &os, const Float &value) noexcept;
+        std::ostream &print(std::ostream &os) const noexcept override;
     };
 }
 

@@ -23,7 +23,7 @@
 #include "DataTypes/Float.h"
 
 namespace DTypes {
-    const TYPES Float::static_type = TYPES::INTEGER;
+    const TYPES Float::static_type = TYPES::FLOAT;
 
     Float::Float(float x) noexcept: x(x) {}
 
@@ -137,7 +137,11 @@ namespace DTypes {
     }
 
     std::ostream &operator<<(std::ostream &os, const Float &value) noexcept {
-        os << value.x;
+        return value.print(os);
+    }
+
+    std::ostream &Float::print(std::ostream &os) const noexcept {
+        os << this->x;
         return os;
     }
 }

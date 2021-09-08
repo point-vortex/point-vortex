@@ -20,14 +20,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef POINT_VORTEX_IFLOWABLE_H
-#define POINT_VORTEX_IFLOWABLE_H
+#include <map>
 
+#include "DataTypes/DataTypes.h"
 
-namespace NFlow {
-    class IFlowable {
-        virtual void getDataset() const = 0;
-    };
+namespace DTypes {
+    [[maybe_unused]] DTProto_t DTProto = {
+            std::make_pair(Integer::static_type, new Integer()),
+            std::make_pair(Float::static_type, new Float()),
+            std::make_pair(Boolean::static_type, new Boolean()),
+            };
 }
-
-#endif //POINT_VORTEX_IFLOWABLE_H

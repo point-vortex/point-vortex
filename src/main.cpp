@@ -21,9 +21,14 @@
 // SOFTWARE.
 
 #include <csignal>
+#include <iostream>
 
 #include <QApplication>
 #include <QPushButton>
+
+//-----TEMP INCLUDe
+#include "DataTypes/Table.h"
+//-----
 
 void handleSIGINT(int signum) {
     //TODO: cleanup;
@@ -31,6 +36,45 @@ void handleSIGINT(int signum) {
 }
 
 int main(int argc, char *argv[]) {
+    DTypes::Table table1;
+    DTypes::Table::Row row;
+    row.insert(std::make_pair("hello", new DTypes::Integer(1)));
+    row.insert(std::make_pair("my", new DTypes::Float(2.0f)));
+    table1.emplace(row);
+
+    row.clear();
+    row.insert(std::make_pair("hello", new DTypes::Integer(2)));
+    row.insert(std::make_pair("darkness", new DTypes::Float(3.0f)));
+
+    table1.emplace(row);
+
+
+    std::cout << "table1" << std::endl;
+    table1.print(std::cout);
+
+
+    DTypes::Table table2;
+    row.insert(std::make_pair("hello", new DTypes::Integer(11)));
+    row.insert(std::make_pair("lol", new DTypes::Float(21.0f)));
+    table2.emplace(row);
+
+    row.clear();
+    row.insert(std::make_pair("kek", new DTypes::Integer(5)));
+    row.insert(std::make_pair("darkness", new DTypes::Float(10.0f)));
+
+    table2.emplace(row);
+
+    std::cout << "table2" << std::endl;
+    table2.print(std::cout);
+
+    DTypes::Table table3;
+    table3.append(table1);
+    std::cout << "table3t1" << std::endl;
+    table3.print(std::cout);
+    table3.append(table2);
+    std::cout << "table3t2" << std::endl;
+    table3.print(std::cout);
+
     signal(SIGINT, handleSIGINT);
 
     QApplication a(argc, argv);
