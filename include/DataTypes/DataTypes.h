@@ -35,7 +35,7 @@ namespace DTypes {
             std::make_pair(Integer::static_type, new Integer()),
             std::make_pair(Float::static_type, new Float()),
             std::make_pair(Boolean::static_type, new Boolean()),
-    }
+    };
 }
 
 #endif //POINT_VORTEX_DATATYPES_H

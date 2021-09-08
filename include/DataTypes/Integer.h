@@ -33,7 +33,7 @@ namespace DTypes {
      */
     class Integer : public DataType {
     public:
-        const static TYPES static_type = TYPES::INTEGER;
+        const static TYPES static_type;
     private:
         int x;
     public:

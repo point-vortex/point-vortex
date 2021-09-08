@@ -34,7 +34,7 @@ namespace DTypes {
      */
     class Boolean : public DataType {
     public:
-        const static TYPES static_type = TYPES::BOOLEAN;
+        const static TYPES static_type;
     private:
         bool x;
     public:

@@ -23,6 +23,8 @@
 #include "DataTypes/Integer.h"
 
 namespace DTypes {
+    const TYPES Integer::static_type = TYPES::INTEGER;
+
     Integer::Integer(int x) noexcept: x(x) {}
 
     Integer::Integer(const Integer &reference) noexcept: x(reference.x) {}

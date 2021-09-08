@@ -23,13 +23,14 @@
 #include "DataTypes/Float.h"
 
 namespace DTypes {
+    const TYPES Float::static_type = TYPES::INTEGER;
+
     Float::Float(float x) noexcept: x(x) {}
 
     Float::Float(const Float &reference) noexcept: x(reference.x) {}
 
     Float *Float::copy() const noexcept {
-        return new Float(*this)
-        noexcept;
+        return new Float(*this);
     }
 
     TYPES Float::type() const noexcept {

@@ -30,7 +30,7 @@
 namespace NFlow {
     class FlowDataset {
     protected:
-        QMap<QString, DTypes::DataType> data;
+        QMap<QString, DTypes::DataType*> data;
 
     };
 }

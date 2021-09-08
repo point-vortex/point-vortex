@@ -2,13 +2,7 @@
 <project version="4">
   <component name="CMakeSharedSettings">
     <configurations>
-      <configuration PROFILE_NAME="Debug-QT" ENABLED="true" CONFIG_NAME="Debug" TOOLCHAIN_NAME="QT">
-        <ADDITIONAL_GENERATION_ENVIRONMENT>
-          <envs>
-            <env name="QT6_DIR" value="$USER_HOME$/Qt/6.1.2/gcc_64/lib/cmake" />
-          </envs>
-        </ADDITIONAL_GENERATION_ENVIRONMENT>
-      </configuration>
+      <configuration PROFILE_NAME="Debug-QT" ENABLED="true" CONFIG_NAME="Debug" TOOLCHAIN_NAME="QT" />
     </configurations>
   </component>
 </project>

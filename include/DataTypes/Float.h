@@ -34,7 +34,7 @@ namespace DTypes {
      */
     class Float : public DataType {
     public:
-        const static TYPES static_type = TYPES::INTEGER;
+        const static TYPES static_type;
     private:
         float x;
     public:

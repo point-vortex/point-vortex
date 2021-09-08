@@ -23,6 +23,8 @@
 #include "DataTypes/Boolean.h"
 
 namespace DTypes {
+    const TYPES Boolean::static_type = TYPES::BOOLEAN;
+
     Boolean::Boolean(bool x) noexcept: x(x) {}
 
     Boolean::Boolean(const Boolean &reference) noexcept: x(reference.x) {}
