@@ -191,11 +191,12 @@ namespace DTypes {
     Table::iterator Table::erase(const Table::const_iterator &from, const Table::const_iterator &to) noexcept {
         if (from.shift >= to.shift) return Table::iterator(this, from.shift);
 
-        for (std::pair<QString, Table::map_item_t> column: this->data) {
+        for (std::pair<QString, Table::map_item_t> column: this->data) { //TODO: fix issue with vector copying in each similar statement.
             vector_t &array = column.second.first;
             vector_t::iterator begin = array.begin();
             array.erase(begin + static_cast<long long>(from.shift), begin + static_cast<long long>(to.shift));
         }
+        this->size -= to.shift - from.shift;
         return Table::iterator(this, from.shift); //TODO: finish return
     }
 
@@ -208,11 +209,15 @@ namespace DTypes {
         for (auto column : this->data) {
             vector_t &array = column.second.first;
             os << column.first.toStdString();
-            for (auto record : array) {
+//            for (auto record : array) {
+//                os << " ";
+//                record->print(os);
+//            }
+            for (std::size_t i = 0; i < this->size; i++) {
                 os << " ";
-                record->print(os);
+                array.at(i)->print(os);
             }
-            os << std::endl;
+            os << "csize(" << array.size() << ")" << std::endl;
         }
         return os;
     }

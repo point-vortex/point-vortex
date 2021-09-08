@@ -75,6 +75,15 @@ int main(int argc, char *argv[]) {
     std::cout << "table3t2" << std::endl;
     table3.print(std::cout);
 
+
+    table3.erase(table3.begin());
+    std::cout << "table3t3" << std::endl;
+    table3.print(std::cout);
+
+    table3.erase(table3.begin(), table3.begin() + 2);
+    std::cout << "table3t4" << std::endl;
+    table3.print(std::cout);
+
     signal(SIGINT, handleSIGINT);
 
     QApplication a(argc, argv);
