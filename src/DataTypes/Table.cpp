@@ -39,7 +39,7 @@ namespace DTypes {
 
     Table &Table::append(const Row &row) {
         storage_t::iterator column;
-        for (const std::pair<QString, DataType *> record : row) {
+        for (const std::pair<QString, DataType *> record: row) {
             column = this->createColumn(record.first, record.second->type());
             column->second.first.emplace_back(record.second->copy());
         }
@@ -49,11 +49,11 @@ namespace DTypes {
 
     Table &Table::append(const Table &table) {
         storage_t::iterator column;
-        for (const std::pair<QString, map_item_t> incomingColumn : table.data) {
+        for (const std::pair<QString, map_item_t> incomingColumn: table.data) {
             column = this->createColumn(incomingColumn.first, incomingColumn.second.second);
             vector_t &array = column->second.first;
             array.reserve(array.size() + table.size);
-            for (DataType *record : incomingColumn.second.first) {
+            for (DataType *record: incomingColumn.second.first) {
                 array.emplace_back(record->copy());
             }
         }
@@ -63,7 +63,7 @@ namespace DTypes {
 
     Table &Table::emplace(const Table::Row &row) {
         storage_t::iterator column;
-        for (const std::pair<QString, DataType *> record : row) {
+        for (const std::pair<QString, DataType *> record: row) {
             column = this->createColumn(record.first, record.second->type());
             column->second.first.emplace_back(record.second);
         }
@@ -73,7 +73,7 @@ namespace DTypes {
 
     Table &Table::emplace(const Table &table) {
         storage_t::iterator column;
-        for (const std::pair<QString, map_item_t> incomingColumn : table.data) {
+        for (const std::pair<QString, map_item_t> incomingColumn: table.data) {
             column = this->createColumn(incomingColumn.first, incomingColumn.second.second);
             vector_t &array = column->second.first;
             const vector_t &incomingArray = incomingColumn.second.first;
@@ -87,7 +87,7 @@ namespace DTypes {
 
     Table::storage_t::iterator Table::dropColumn(const storage_t::iterator &column) noexcept {
         if (column != this->data.end()) {
-            for (DataType *record : column->second.first) {
+            for (DataType *record: column->second.first) {
                 delete (record);
             }
             column->second.first.clear();
@@ -160,10 +160,14 @@ namespace DTypes {
     }
 
     Table::iterator Table::erase(const Table::const_iterator &from, const Table::const_iterator &to) noexcept {
-        for (const std::pair<QString, Table::map_item_t> &column: this->data) {
-            
+        if (from.shift >= to.shift) return Table::iterator(this, from.shift);
+
+        for (std::pair<QString, Table::map_item_t> column: this->data) {
+            vector_t &array = column.second.first;
+            vector_t::iterator begin = array.begin();
+            array.erase(begin + static_cast<long long>(from.shift), begin + static_cast<long long>(to.shift));
         }
-        return Table::iterator(nullptr); //TODO: finish return
+        return Table::iterator(this, from.shift); //TODO: finish return
     }
 
     Table::iterator Table::erase(const Table::const_iterator &position) noexcept {
@@ -180,11 +184,63 @@ namespace DTypes {
 
 // -------------------------------------------------------------------------------------------------- CONST ITERATOR ---
     Table::const_iterator::const_iterator(Table *target, std::size_t shift) : target(target), shift(shift), row() {
-        if (target->size < shift) {
+        this->sync();
+    }
+
+    void Table::const_iterator::sync() noexcept {
+        if (this->target->size < this->shift) {
             for (const std::pair<QString, Table::map_item_t> &column: target->data) {
                 this->row.insert(std::make_pair(column.first, column.second.first.at(shift)));
             }
         }
+    }
+
+    Table::const_iterator &Table::const_iterator::operator++() noexcept {
+        ++this->shift;
+        return *this;
+    }
+
+    Table::const_iterator Table::const_iterator::operator++(int) noexcept {
+        Table::const_iterator old{*this};
+        ++this->shift;
+        return old;
+    }
+
+    Table::const_iterator &Table::const_iterator::operator--() noexcept {
+        --this->shift;
+        return *this;
+    }
+
+    Table::const_iterator Table::const_iterator::operator--(int) noexcept {
+        Table::const_iterator old{*this};
+        --this->shift;
+        return old;
+    }
+
+    Table::const_iterator &Table::const_iterator::operator+=(std::size_t x) noexcept {
+        this->shift += x;
+        return *this;
+    }
+
+    Table::const_iterator &Table::const_iterator::operator-=(std::size_t x) noexcept {
+        this->shift -= x;
+        return *this;
+    }
+
+    Table::Row &Table::const_iterator::operator*() noexcept {
+        return this->row;
+    }
+
+    Table::Row *Table::const_iterator::operator->() noexcept {
+        return &this->row;
+    }
+
+    Table::const_iterator operator+(const Table::const_iterator &lhs, const std::size_t shift) {
+        return Table::const_iterator(lhs.target, lhs.shift + shift);
+    }
+
+    Table::const_iterator operator-(const Table::const_iterator &lhs, const std::size_t shift) {
+        return Table::const_iterator(lhs.target, lhs.shift - shift);
     }
 
 // -------------------------------------------------------------------------------------------------------- ITERATOR ---

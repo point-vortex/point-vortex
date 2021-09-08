@@ -40,11 +40,15 @@ namespace DTypes {
             using std::map<QString, DataType *>::insert;
             using std::map<QString, DataType *>::clear;
             using std::map<QString, DataType *>::erase;
-            using std::map<QString, DataType *>::contains;
+            // using std::map<QString, DataType *>::contains;
             using std::map<QString, DataType *>::size;
             using std::map<QString, DataType *>::at;
             using std::map<QString, DataType *>::begin;
             using std::map<QString, DataType *>::end;
+            using std::map<QString, DataType *>::iterator;
+            using std::map<QString, DataType *>::const_iterator;
+            using std::map<QString, DataType *>::reverse_iterator;
+            using std::map<QString, DataType *>::const_reverse_iterator;
             using std::map<QString, DataType *>::operator[];
         };
 
@@ -56,6 +60,8 @@ namespace DTypes {
             Row row;
         private:
             explicit const_iterator(Table *target, std::size_t shift = 0);
+        private:
+            void sync() noexcept;
         public:
             const_iterator &operator++() noexcept;
             const_iterator operator++(int) noexcept;
@@ -63,10 +69,13 @@ namespace DTypes {
             const_iterator operator--(int) noexcept;
         public:
             const_iterator &operator+=(std::size_t x) noexcept;
-            const_iterator operator-=(std::size_t x) noexcept;
+            const_iterator &operator-=(std::size_t x) noexcept;
         public:
             Row &operator*() noexcept;
             Row *operator->() noexcept;
+        public:
+            friend const_iterator operator+(const const_iterator &lhs, std::size_t);
+            friend const_iterator operator-(const const_iterator &lhs, std::size_t);
         };
 
         class iterator : public const_iterator {
@@ -99,7 +108,7 @@ namespace DTypes {
         Table &addColumn(const QString &name, const DataType *defaultValue) noexcept;
     public:
         iterator erase(const const_iterator &position) noexcept;
-        iterator erase(const const_iterator &from, const const_iterator& to) noexcept;
+        iterator erase(const const_iterator &from, const const_iterator &to) noexcept;
     public:
         iterator begin() noexcept;
         iterator end() noexcept;
