@@ -20,20 +20,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef POINT_VORTEX_FLOWDATASET_H
-#define POINT_VORTEX_FLOWDATASET_H
+#ifndef POINT_VORTEX_DATATYPES_H
+#define POINT_VORTEX_DATATYPES_H
 
-#include <QMap>
+#include <map>
 
-#include "DataTypes/DataType.h"
+#include "Integer.h"
+#include "Float.h"
+#include "Boolean.h"
 
-namespace NFlow {
-    class FlowDataset {
-    protected:
-        QMap<QString, DTypes::DataType*> data;
-
+namespace DTypes {
+    //TODO: cleanup memory on terminating.
+    std::map<TYPES, const DataType * const> DTProto = {
+            std::make_pair(Integer::static_type, new Integer()),
+            std::make_pair(Float::static_type, new Float()),
+            std::make_pair(Boolean::static_type, new Boolean()),
     };
 }
 
-
-#endif //POINT_VORTEX_FLOWDATASET_H
+#endif //POINT_VORTEX_DATATYPES_H

@@ -20,10 +20,19 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#include <csignal>
+
 #include <QApplication>
 #include <QPushButton>
 
+void handleSIGINT(int signum) {
+    //TODO: cleanup;
+    exit(signum);
+}
+
 int main(int argc, char *argv[]) {
+    signal(SIGINT, handleSIGINT);
+
     QApplication a(argc, argv);
     QPushButton button("Hello world!", nullptr);
     button.resize(200, 100);

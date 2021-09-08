@@ -23,17 +23,32 @@
 #ifndef POINT_VORTEX_DATATYPE_H
 #define POINT_VORTEX_DATATYPE_H
 
-#include <QString>
-
 #include "utils/ICopyable.h"
 
+
 namespace DTypes {
+    enum class TYPES {
+        UNKNOWN,
+        INTEGER,
+        FLOAT,
+        BOOLEAN,
+        STRING,
+    };
+
+    class Integer;
+
+    class Float;
+
+    class Boolean;
+
     class DataType : public utils::ICopyable {
-    protected:
-        QString typeName = "unknown";
+    public:
+        const static TYPES static_type = TYPES::UNKNOWN;
     public:
         virtual ~DataType() = default;
         [[nodiscard]] DataType *copy() const override = 0;
+    public:
+        virtual TYPES type() const noexcept { return TYPES::UNKNOWN; }
     };
 }
 
