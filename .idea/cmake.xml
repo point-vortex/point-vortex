@@ -2,7 +2,7 @@
 <project version="4">
   <component name="CMakeSharedSettings">
     <configurations>
-      <configuration PROFILE_NAME="Debug-QT" ENABLED="true" CONFIG_NAME="Debug" TOOLCHAIN_NAME="QT" />
+      <configuration PROFILE_NAME="Debug-QT" ENABLED="true" CONFIG_NAME="Debug" TOOLCHAIN_NAME="QT" GENERATION_OPTIONS="-DENABLE_GOOGLE_TEST=true" />
     </configurations>
   </component>
 </project>

@@ -18,7 +18,7 @@ file(GLOB_RECURSE SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp")
 # Exclude main.cpp from sources
 list(REMOVE_ITEM SOURCES "${PROJECT_SOURCE_DIR}/src/main.cpp")
 
-file(GLOB_RECURSE TEST_SOURCES "${PROJECT_SOURCE_DIR}/test/*.cpp")
+file(GLOB_RECURSE TEST_SOURCES "${PROJECT_SOURCE_DIR}/tests/*.cpp")
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
 add_executable(${PROJECT_NAME} ${SOURCES} "${PROJECT_SOURCE_DIR}/src/main.cpp" ${HEADERS})
@@ -78,11 +78,12 @@ if (ENABLE_GOOGLE_TEST)
     FetchContent_MakeAvailable(googletest)
 
     # TODO: add SOURCES to compile
-    add_executable(${PROJECT_NAME}_test ${TEST_SOURCES})
+    add_executable(${PROJECT_NAME}_test ${TEST_SOURCES} ${HEADERS} ${SOURCES})
     target_link_libraries(
             ${PROJECT_NAME}_test
             gtest_main
     )
+    target_link_libraries(${PROJECT_NAME}_test ${REQUIRED_LIBS_QUALIFIED})
 
     include(GoogleTest)
     gtest_discover_tests(${PROJECT_NAME}_test)
