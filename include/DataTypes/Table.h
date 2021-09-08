@@ -59,7 +59,7 @@ namespace DTypes {
             std::size_t shift;
             Row row;
         private:
-            explicit const_iterator(Table *target, std::size_t shift = 0);
+            explicit const_iterator(Table *target, const std::size_t &shift = 0);
         private:
             void sync() noexcept;
         public:
@@ -68,20 +68,20 @@ namespace DTypes {
             const_iterator &operator--() noexcept;
             const_iterator operator--(int) noexcept;
         public:
-            const_iterator &operator+=(std::size_t x) noexcept;
-            const_iterator &operator-=(std::size_t x) noexcept;
+            const_iterator &operator+=(const std::size_t &x) noexcept;
+            const_iterator &operator-=(const std::size_t &x) noexcept;
         public:
             Row &operator*() noexcept;
             Row *operator->() noexcept;
         public:
-            friend const_iterator operator+(const const_iterator &lhs, std::size_t);
-            friend const_iterator operator-(const const_iterator &lhs, std::size_t);
+            friend const_iterator operator+(const const_iterator &lhs, const std::size_t &rhs);
+            friend const_iterator operator-(const const_iterator &lhs, const std::size_t &rhs);
         };
 
         class iterator : public const_iterator {
             friend Table;
         private:
-            explicit iterator(Table *target, std::size_t shift = 0);
+            explicit iterator(Table *target, const std::size_t &shift = 0);
         };
 
         friend const_iterator;
@@ -92,7 +92,8 @@ namespace DTypes {
         using storage_t = std::map<QString, map_item_t>;
     private:
         storage_t data;
-        std::size_t size;
+        std::size_t _size;
+        std::size_t _capacity;
     public:
         Table();
         Table(const Table &reference);
@@ -114,17 +115,22 @@ namespace DTypes {
         iterator end() noexcept;
         const_iterator cbegin() noexcept;
         const_iterator cend() noexcept;
+    public:
+        Table &reserve(const std::size_t &newCapacity);
+        [[nodiscard]] std::size_t capacity() const noexcept;
+        [[nodiscard]] std::size_t size() const noexcept;
     private:
         storage_t::iterator dropColumn(const storage_t::iterator &column) noexcept;
     private:
         storage_t::iterator createColumn(const QString &name, const TYPES &type);
         storage_t::iterator createColumn(const QString &name, const DataType *defaultValue) noexcept;
-        void syncColumn(const storage_t::iterator& column) noexcept;
+        void syncColumn(const storage_t::iterator &column) noexcept;
         inline void syncAllColumns() noexcept;
+        inline void syncCapacity() noexcept;
     public: //TODO: add ifdef debug
-        std::ostream& print(std::ostream& os) const noexcept override;
+        std::ostream &print(std::ostream &os) const noexcept override;
     public:
-        Table * copy() const override;
+        [[nodiscard]] Table *copy() const override;
     };
 }
 
