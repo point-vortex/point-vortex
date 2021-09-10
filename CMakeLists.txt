@@ -8,6 +8,39 @@ set(CMAKE_AUTOUIC ON)
 
 set(CMAKE_PREFIX_PATH $ENV{QT6_DIR})
 
+function(loadQt6DllsIntoTarget target)
+    if (WIN32)
+        set(DEBUG_SUFFIX)
+        if (MSVC)
+            if (CMAKE_BUILD_TYPE MATCHES "Debug")
+                set(DEBUG_SUFFIX "d")
+            endif ()
+        endif ()
+        set(QT_INSTALL_PATH "${CMAKE_PREFIX_PATH}")
+        if (NOT EXISTS "${QT_INSTALL_PATH}/bin")
+            set(QT_INSTALL_PATH "${QT_INSTALL_PATH}/..")
+            if (NOT EXISTS "${QT_INSTALL_PATH}/bin")
+                set(QT_INSTALL_PATH "${QT_INSTALL_PATH}/..")
+            endif ()
+        endif ()
+        if (EXISTS "${QT_INSTALL_PATH}/plugins/platforms/qwindows${DEBUG_SUFFIX}.dll")
+            add_custom_command(TARGET ${target} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E make_directory
+                    "$<TARGET_FILE_DIR:${target}>/plugins/platforms/")
+            add_custom_command(TARGET ${target} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy
+                    "${QT_INSTALL_PATH}/plugins/platforms/qwindows${DEBUG_SUFFIX}.dll"
+                    "$<TARGET_FILE_DIR:${target}>/plugins/platforms/")
+        endif ()
+        foreach (QT_LIB ${REQUIRED_LIBS})
+            add_custom_command(TARGET ${target} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy
+                    "${QT_INSTALL_PATH}/bin/Qt${QT_VERSION}${QT_LIB}${DEBUG_SUFFIX}.dll"
+                    "$<TARGET_FILE_DIR:${target}>")
+        endforeach (QT_LIB)
+    endif ()
+endfunction()
+
 # -------------------------------------------------- Setting up QT
 set(QT_VERSION 6)
 set(REQUIRED_LIBS Core Gui Widgets OpenGL)
@@ -18,7 +51,7 @@ file(GLOB_RECURSE SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp")
 # Exclude main.cpp from sources
 list(REMOVE_ITEM SOURCES "${PROJECT_SOURCE_DIR}/src/main.cpp")
 
-file(GLOB_RECURSE TEST_SOURCES "${PROJECT_SOURCE_DIR}/test/*.cpp")
+file(GLOB_RECURSE TEST_SOURCES "${PROJECT_SOURCE_DIR}/tests/*.cpp")
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
 add_executable(${PROJECT_NAME} ${SOURCES} "${PROJECT_SOURCE_DIR}/src/main.cpp" ${HEADERS})
@@ -35,36 +68,7 @@ endif ()
 
 find_package(Qt${QT_VERSION} COMPONENTS ${REQUIRED_LIBS} REQUIRED)
 target_link_libraries(${PROJECT_NAME} ${REQUIRED_LIBS_QUALIFIED})
-if (WIN32)
-    set(DEBUG_SUFFIX)
-    if (MSVC)
-        if (CMAKE_BUILD_TYPE MATCHES "Debug")
-            set(DEBUG_SUFFIX "d")
-        endif ()
-    endif ()
-    set(QT_INSTALL_PATH "${CMAKE_PREFIX_PATH}")
-    if (NOT EXISTS "${QT_INSTALL_PATH}/bin")
-        set(QT_INSTALL_PATH "${QT_INSTALL_PATH}/..")
-        if (NOT EXISTS "${QT_INSTALL_PATH}/bin")
-            set(QT_INSTALL_PATH "${QT_INSTALL_PATH}/..")
-        endif ()
-    endif ()
-    if (EXISTS "${QT_INSTALL_PATH}/plugins/platforms/qwindows${DEBUG_SUFFIX}.dll")
-        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E make_directory
-                "$<TARGET_FILE_DIR:${PROJECT_NAME}>/plugins/platforms/")
-        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy
-                "${QT_INSTALL_PATH}/plugins/platforms/qwindows${DEBUG_SUFFIX}.dll"
-                "$<TARGET_FILE_DIR:${PROJECT_NAME}>/plugins/platforms/")
-    endif ()
-    foreach (QT_LIB ${REQUIRED_LIBS})
-        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy
-                "${QT_INSTALL_PATH}/bin/Qt${QT_VERSION}${QT_LIB}${DEBUG_SUFFIX}.dll"
-                "$<TARGET_FILE_DIR:${PROJECT_NAME}>")
-    endforeach (QT_LIB)
-endif ()
+loadQt6DllsIntoTarget(${PROJECT_NAME})
 
 # -------------------------------------------------- Google test
 if (ENABLE_GOOGLE_TEST)
@@ -78,11 +82,14 @@ if (ENABLE_GOOGLE_TEST)
     FetchContent_MakeAvailable(googletest)
 
     # TODO: add SOURCES to compile
-    add_executable(${PROJECT_NAME}_test ${TEST_SOURCES})
+    add_executable(${PROJECT_NAME}_test ${TEST_SOURCES} ${HEADERS} ${SOURCES})
     target_link_libraries(
             ${PROJECT_NAME}_test
             gtest_main
     )
+    target_link_libraries(${PROJECT_NAME}_test ${REQUIRED_LIBS_QUALIFIED})
+
+    loadQt6DllsIntoTarget(${PROJECT_NAME}_test)
 
     include(GoogleTest)
     gtest_discover_tests(${PROJECT_NAME}_test)
