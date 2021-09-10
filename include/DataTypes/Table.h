@@ -40,7 +40,7 @@ namespace DTypes {
             using std::map<QString, DataType *>::insert;
             using std::map<QString, DataType *>::clear;
             using std::map<QString, DataType *>::erase;
-            // using std::map<QString, DataType *>::contains;
+            using std::map<QString, DataType *>::contains;
             using std::map<QString, DataType *>::size;
             using std::map<QString, DataType *>::at;
             using std::map<QString, DataType *>::begin;
@@ -52,40 +52,45 @@ namespace DTypes {
             using std::map<QString, DataType *>::operator[];
         };
 
-        class const_iterator {
+    public:
+        template<class T>
+        class iterator_base {
             friend Table;
+        public:
+            using iterator_category = std::forward_iterator_tag;
+            using value_type = T;
+            using difference_type = std::ptrdiff_t;
+            using pointer = T *;
+            using reference = T &;
         private:
             Table *target;
             std::size_t shift;
             Row row;
         private:
-            explicit const_iterator(Table *target, const std::size_t &shift = 0);
+            explicit iterator_base(Table *target, const std::size_t &shift = 0);
         private:
             void sync() noexcept;
         public:
-            const_iterator &operator++() noexcept;
-            const_iterator operator++(int) noexcept;
-            const_iterator &operator--() noexcept;
-            const_iterator operator--(int) noexcept;
+            iterator_base<T> &operator++() noexcept;
+            iterator_base<T> operator++(int) noexcept;
+            iterator_base<T> &operator--() noexcept;
+            iterator_base<T> operator--(int) noexcept;
         public:
-            const_iterator &operator+=(const std::size_t &x) noexcept;
-            const_iterator &operator-=(const std::size_t &x) noexcept;
+            iterator_base<T> &operator+=(const std::size_t &x) noexcept;
+            iterator_base<T> &operator-=(const std::size_t &x) noexcept;
         public:
             Row &operator*() noexcept;
             Row *operator->() noexcept;
         public:
-            friend const_iterator operator+(const const_iterator &lhs, const std::size_t &rhs);
-            friend const_iterator operator-(const const_iterator &lhs, const std::size_t &rhs);
+            friend iterator_base<T> operator+(const iterator_base<T> &lhs, const std::size_t &rhs);
+            friend iterator_base<T> operator-(const iterator_base<T> &lhs, const std::size_t &rhs);
         };
 
-        class iterator : public const_iterator {
-            friend Table;
-        private:
-            explicit iterator(Table *target, const std::size_t &shift = 0);
-        };
-
-        friend const_iterator;
+    public:
+        using const_iterator = iterator_base<const Row>;
+        using iterator = iterator_base<Row>;
         friend iterator;
+        friend const_iterator;
     protected:
         using vector_t = std::vector<DataType *>;
         using map_item_t = std::pair<std::vector<DataType *>, TYPES>;
@@ -108,8 +113,10 @@ namespace DTypes {
         Table &addColumn(const QString &name, const TYPES &type);
         Table &addColumn(const QString &name, const DataType *defaultValue) noexcept;
     public:
-        iterator erase(const const_iterator &position) noexcept;
-        iterator erase(const const_iterator &from, const const_iterator &to) noexcept;
+        template<class T>
+        iterator erase(const iterator_base<T> &position) noexcept;
+        template<class T>
+        iterator erase(const iterator_base<T> &from, const iterator_base<T> &to) noexcept;
     public:
         iterator begin() noexcept;
         iterator end() noexcept;

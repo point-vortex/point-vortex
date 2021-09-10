@@ -24,6 +24,9 @@
 
 
 namespace DTypes {
+    template class Table::iterator_base<Table::Row>;
+    template class Table::iterator_base<const Table::Row>;
+
     extern DTProto_t DTProto;
 
 // ----------------------------------------------------------------------------------------------------------- TABLE ---
@@ -209,7 +212,8 @@ namespace DTypes {
         return this->_size;
     }
 
-    Table::iterator Table::erase(const Table::const_iterator &from, const Table::const_iterator &to) noexcept {
+    template<class T>
+    Table::iterator Table::erase(const Table::iterator_base<T> &from, const Table::iterator_base<T> &to) noexcept {
         if (from.shift >= to.shift) return Table::iterator(this, from.shift);
 
         for (std::pair<const QString, map_item_t> &column : this->data) {
@@ -227,7 +231,8 @@ namespace DTypes {
         return Table::iterator(this, from.shift); //TODO: finish return
     }
 
-    Table::iterator Table::erase(const Table::const_iterator &position) noexcept {
+    template<class T>
+    Table::iterator Table::erase(const Table::iterator_base<T> &position) noexcept {
         return this->erase(position, position + 1);
     }
 
@@ -257,12 +262,14 @@ namespace DTypes {
     }
 
 // -------------------------------------------------------------------------------------------------- CONST ITERATOR ---
-    Table::const_iterator::const_iterator(Table *target, const std::size_t &shift)
+    template<class T>
+    Table::iterator_base<T>::iterator_base(Table *target, const std::size_t &shift)
             : target(target), shift(shift), row() {
         this->sync();
     }
 
-    void Table::const_iterator::sync() noexcept {
+    template<class T>
+    void Table::iterator_base<T>::sync() noexcept {
         if (this->target->_size < this->shift) {
             for (const std::pair<QString, Table::map_item_t> &column: target->data) {
                 this->row.insert(std::make_pair(column.first, column.second.first.at(shift)));
@@ -270,51 +277,61 @@ namespace DTypes {
         }
     }
 
-    Table::const_iterator &Table::const_iterator::operator++() noexcept {
+    template<class T>
+    Table::iterator_base<T> &Table::iterator_base<T>::operator++() noexcept {
         ++this->shift;
         return *this;
     }
 
-    Table::const_iterator Table::const_iterator::operator++(int) noexcept {
-        Table::const_iterator old{*this};
+    template<class T>
+    Table::iterator_base<T> Table::iterator_base<T>::operator++(int) noexcept {
+        Table::iterator_base<T> old{*this};
         ++this->shift;
         return old;
     }
 
-    Table::const_iterator &Table::const_iterator::operator--() noexcept {
+    template<class T>
+    Table::iterator_base<T> &Table::iterator_base<T>::operator--() noexcept {
         --this->shift;
         return *this;
     }
 
-    Table::const_iterator Table::const_iterator::operator--(int) noexcept {
-        Table::const_iterator old{*this};
+    template<class T>
+    Table::iterator_base<T> Table::iterator_base<T>::operator--(int) noexcept {
+        Table::iterator_base<T> old{*this};
         --this->shift;
         return old;
     }
 
-    Table::const_iterator &Table::const_iterator::operator+=(const std::size_t &x) noexcept {
+    template<class T>
+    Table::iterator_base<T> &Table::iterator_base<T>::operator+=(const std::size_t &x) noexcept {
         this->shift += x;
         return *this;
     }
 
-    Table::const_iterator &Table::const_iterator::operator-=(const std::size_t &x) noexcept {
+    template<class T>
+    Table::iterator_base<T> &Table::iterator_base<T>::operator-=(const std::size_t &x) noexcept {
         this->shift -= x;
         return *this;
     }
 
-    Table::Row &Table::const_iterator::operator*() noexcept {
+    template<class T>
+    Table::Row &Table::iterator_base<T>::operator*() noexcept {
         return this->row;
     }
 
-    Table::Row *Table::const_iterator::operator->() noexcept {
+    template<class T>
+    Table::Row *Table::iterator_base<T>::operator->() noexcept {
         return &this->row;
     }
 
-    Table::const_iterator operator+(const Table::const_iterator &lhs, const std::size_t &shift) {
+    template<class T>
+    Table::iterator_base<T> operator+(const Table::iterator_base<T> &lhs, const std::size_t &shift) {
         return Table::const_iterator(lhs.target, lhs.shift + shift);
     }
 
-    Table::const_iterator operator-(const Table::const_iterator &lhs, const std::size_t &shift) {
+    template<class T>
+    Table::iterator_base<T> operator-(const Table::iterator_base<T> &lhs, const std::size_t &shift) {
         return Table::const_iterator(lhs.target, lhs.shift - shift);
     }
 
@@ -323,8 +340,5 @@ namespace DTypes {
             this->_capacity = this->_size;
         }
     }
-
-// -------------------------------------------------------------------------------------------------------- ITERATOR ---
-    Table::iterator::iterator(Table *target, const std::size_t &shift) : const_iterator(target, shift) {}
 }
 
