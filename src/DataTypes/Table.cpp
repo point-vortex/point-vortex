@@ -24,9 +24,6 @@
 
 
 namespace DTypes {
-    template class Table::iterator_base<Table::Row>;
-    template class Table::iterator_base<const Table::Row>;
-
     extern DTProto_t DTProto;
 
 // ----------------------------------------------------------------------------------------------------------- TABLE ---
@@ -212,30 +209,6 @@ namespace DTypes {
         return this->_size;
     }
 
-    template<class T>
-    Table::iterator Table::erase(const Table::iterator_base<T> &from, const Table::iterator_base<T> &to) noexcept {
-        if (from.shift >= to.shift) return Table::iterator(this, from.shift);
-
-        for (std::pair<const QString, map_item_t> &column : this->data) {
-            vector_t &array = column.second.first;
-            vector_t::iterator arrayBegin = array.begin();
-            auto start = arrayBegin + static_cast<long long>(from.shift);
-            auto finish = arrayBegin + static_cast<long long>(to.shift);
-            for (auto record = start; record != finish; record++) {
-                delete *record.base();
-            }
-            array.erase(start, finish);
-        }
-        this->_size -= to.shift - from.shift;
-        this->syncCapacity();
-        return Table::iterator(this, from.shift); //TODO: finish return
-    }
-
-    template<class T>
-    Table::iterator Table::erase(const Table::iterator_base<T> &position) noexcept {
-        return this->erase(position, position + 1);
-    }
-
     std::ostream &Table::print(std::ostream &os) const noexcept {
         //TODO: rewrite with self iterators
         for (auto column : this->data) {
@@ -258,86 +231,6 @@ namespace DTypes {
     Table::Row::~Row() {
         for (const std::pair<QString, DataType *> record: *this) {
             delete record.second;
-        }
-    }
-
-// -------------------------------------------------------------------------------------------------- CONST ITERATOR ---
-    template<class T>
-    Table::iterator_base<T>::iterator_base(Table *target, const std::size_t &shift)
-            : target(target), shift(shift), row() {
-        this->sync();
-    }
-
-    template<class T>
-    void Table::iterator_base<T>::sync() noexcept {
-        if (this->target->_size < this->shift) {
-            for (const std::pair<QString, Table::map_item_t> &column: target->data) {
-                this->row.insert(std::make_pair(column.first, column.second.first.at(shift)));
-            }
-        }
-    }
-
-    template<class T>
-    Table::iterator_base<T> &Table::iterator_base<T>::operator++() noexcept {
-        ++this->shift;
-        return *this;
-    }
-
-    template<class T>
-    Table::iterator_base<T> Table::iterator_base<T>::operator++(int) noexcept {
-        Table::iterator_base<T> old{*this};
-        ++this->shift;
-        return old;
-    }
-
-    template<class T>
-    Table::iterator_base<T> &Table::iterator_base<T>::operator--() noexcept {
-        --this->shift;
-        return *this;
-    }
-
-    template<class T>
-    Table::iterator_base<T> Table::iterator_base<T>::operator--(int) noexcept {
-        Table::iterator_base<T> old{*this};
-        --this->shift;
-        return old;
-    }
-
-    template<class T>
-    Table::iterator_base<T> &Table::iterator_base<T>::operator+=(const std::size_t &x) noexcept {
-        this->shift += x;
-        return *this;
-    }
-
-    template<class T>
-    Table::iterator_base<T> &Table::iterator_base<T>::operator-=(const std::size_t &x) noexcept {
-        this->shift -= x;
-        return *this;
-    }
-
-    template<class T>
-    Table::Row &Table::iterator_base<T>::operator*() noexcept {
-        return this->row;
-    }
-
-    template<class T>
-    Table::Row *Table::iterator_base<T>::operator->() noexcept {
-        return &this->row;
-    }
-
-    template<class T>
-    Table::iterator_base<T> operator+(const Table::iterator_base<T> &lhs, const std::size_t &shift) {
-        return Table::const_iterator(lhs.target, lhs.shift + shift);
-    }
-
-    template<class T>
-    Table::iterator_base<T> operator-(const Table::iterator_base<T> &lhs, const std::size_t &shift) {
-        return Table::const_iterator(lhs.target, lhs.shift - shift);
-    }
-
-    void Table::syncCapacity() noexcept {
-        if (this->_capacity < this->_size) {
-            this->_capacity = this->_size;
         }
     }
 }

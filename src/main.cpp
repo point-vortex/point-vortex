@@ -95,6 +95,17 @@ int main(int argc, char *argv[]) {
     table3.print(std::cout);
 
 
+    for (const auto& a : table3) {
+        dynamic_cast<DTypes::Integer*>(a.at("aa"))->set(1);
+        a.at("aa")->a();
+    }
+
+    table3.cbegin()->at("a")->a();
+    for (auto i = table3.cbegin(); i != table3.cend(); i++) {
+        dynamic_cast<DTypes::Integer*>(i->at("aa"))->set(1);
+        i->at("aa")->a();
+    }
+
     signal(SIGINT, handleSIGINT);
 
     QApplication a(argc, argv);
