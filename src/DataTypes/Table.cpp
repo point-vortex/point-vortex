@@ -234,5 +234,171 @@ namespace DTypes {
 //            delete record.second;
 //        }
 //    }
+
+
+
+    template<class T>
+    Table::iterator Table::erase(const Table::iterator_base<T> &from, const Table::iterator_base<T> &to) noexcept {
+        if (from.shift >= to.shift) return Table::iterator(this, from.shift);
+
+        for (std::pair<const QString, map_item_t> &column : this->data) {
+            vector_t &array = column.second.first;
+            vector_t::iterator arrayBegin = array.begin();
+            auto start = arrayBegin + static_cast<long long>(from.shift);
+            auto finish = arrayBegin + static_cast<long long>(to.shift);
+            for (auto record = start; record != finish; record++) {
+                delete *record.base();
+            }
+            array.erase(start, finish);
+        }
+        this->_size -= to.shift - from.shift;
+        this->syncCapacity();
+        return Table::iterator(this, from.shift);
+    }
+
+    template<class T>
+    Table::iterator Table::erase(const Table::iterator_base<T> &position) noexcept {
+        return this->erase(position, position + 1);
+    }
+
+    void Table::syncCapacity() noexcept { if (this->_capacity < this->_size) this->_capacity = this->_size; }
+
+    // --------------------------------------------------------------------------------------------------- ITERATOR BASE ---
+
+    template<class T>
+    Table::iterator_base<T>::iterator_base(Table *target, const std::size_t &shift)
+            : target(target), shift(shift), _row() {}
+
+    template<class T>
+    T &Table::iterator_base<T>::sync() noexcept {
+        if (this->target->_size < this->shift) {
+            for (const std::pair<QString, Table::map_item_t> &column: target->data) {
+                this->_row.insert(std::make_pair(column.first, column.second.first.at(shift)));
+            }
+        }
+        return this->_row;
+    }
+
+    template<class T>
+    Table::iterator_base<T> &Table::iterator_base<T>::operator++() noexcept {
+        ++this->shift;
+        return *this;
+    }
+
+    template<class T>
+    const Table::iterator_base<T> Table::iterator_base<T>::operator++(int) noexcept {
+        Table::iterator_base<T> old{*this};
+        ++this->shift;
+        return old;
+    }
+
+    template<class T>
+    Table::iterator_base<T> &Table::iterator_base<T>::operator--() noexcept {
+        --this->shift;
+        return *this;
+    }
+
+    template<class T>
+    const Table::iterator_base<T> Table::iterator_base<T>::operator--(int) noexcept {
+        Table::iterator_base<T> old{*this};
+        --this->shift;
+        return old;
+    }
+
+    template<class T>
+    Table::iterator_base<T> &Table::iterator_base<T>::operator+=(const std::size_t &x) noexcept {
+        this->shift += x;
+        return *this;
+    }
+
+    template<class T>
+    Table::iterator_base<T> &Table::iterator_base<T>::operator-=(const std::size_t &x) noexcept {
+        this->shift -= x;
+        return *this;
+    }
+
+    template<class T>
+    typename Table::iterator_base<T>::reference Table::iterator_base<T>::operator*() noexcept {
+        return this->_row;
+    }
+
+    template<class T>
+    typename Table::iterator_base<T>::pointer Table::iterator_base<T>::operator->() noexcept {
+        return &this->_row;
+    }
+
+    template<class E>
+    Table::iterator_base<E> operator+(const Table::iterator_base<E> &lhs, const std::size_t &rhs) noexcept {
+        return Table::iterator_base<E>(lhs.target, lhs.shift + rhs);
+    }
+
+    template<class E>
+    Table::iterator_base<E> operator-(const Table::iterator_base<E> &lhs, const std::size_t &rhs) noexcept {
+        return Table::iterator_base<E>(lhs.target, lhs.shift - rhs);
+    }
+
+    template<class Lhs, class Rhs>
+    bool operator==(const Table::iterator_base<Lhs> &lhs, const Table::iterator_base<Rhs> &rhs) noexcept {
+        return lhs.shift == rhs.shift;
+    }
+
+    template<class Lhs, class Rhs>
+    bool operator!=(const Table::iterator_base<Lhs> &lhs, const Table::iterator_base<Rhs> &rhs) noexcept {
+        return lhs.shift != rhs.shift;
+    }
+
+    template
+    class Table::iterator_base<Table::row>;
+
+    template
+    class Table::iterator_base<Table::const_row>;
+
+    template
+    class Table::row_base<const DataType *>;
+
+    template
+    class Table::row_base<DataType *>;
+
+    // Table methods.
+    template Table::iterator Table::erase<Table::row>(const Table::iterator_base<Table::row> &position) noexcept;
+    template Table::iterator
+    Table::erase<Table::const_row>(const Table::iterator_base<Table::const_row> &position) noexcept;
+
+    // ITERATOR OPERATOR !=
+    template bool operator!=<Table::row, Table::row>(const Table::iterator_base<Table::row> &,
+                                                     const Table::iterator_base<Table::row> &) noexcept;
+    template bool operator!=<Table::const_row, Table::row>(const Table::iterator_base<Table::const_row> &,
+                                                           const Table::iterator_base<Table::row> &) noexcept;
+    template bool operator!=<Table::row, Table::const_row>(const Table::iterator_base<Table::row> &,
+                                                           const Table::iterator_base<Table::const_row> &) noexcept;
+    template bool operator!=<Table::const_row, Table::const_row>(const Table::iterator_base<Table::const_row> &,
+                                                                 const Table::iterator_base<Table::const_row> &) noexcept;
+
+
+    // ITERATOR OPERATOR ==
+    template bool operator==<Table::row, Table::row>(const Table::iterator_base<Table::row> &,
+                                                     const Table::iterator_base<Table::row> &) noexcept;
+    template bool operator==<Table::const_row, Table::row>(const Table::iterator_base<Table::const_row> &,
+                                                           const Table::iterator_base<Table::row> &) noexcept;
+    template bool operator==<Table::row, Table::const_row>(const Table::iterator_base<Table::row> &,
+                                                           const Table::iterator_base<Table::const_row> &) noexcept;
+    template bool operator==<Table::const_row, Table::const_row>(const Table::iterator_base<Table::const_row> &,
+                                                                 const Table::iterator_base<Table::const_row> &) noexcept;
+
+
+    // ITERATOR OPERATOR +
+    template Table::iterator_base<Table::row> operator+<Table::row>(const Table::iterator_base<Table::row> &,
+                                                                    const std::size_t &) noexcept;
+    template Table::iterator_base<Table::const_row>
+    operator+<Table::const_row>(const Table::iterator_base<Table::const_row> &,
+                                const std::size_t &) noexcept;
+
+
+    // ITERATOR OPERATOR -
+    template Table::iterator_base<Table::row> operator-<Table::row>(const Table::iterator_base<Table::row> &,
+                                                                    const std::size_t &) noexcept;
+    template Table::iterator_base<Table::const_row>
+    operator-<Table::const_row>(const Table::iterator_base<Table::const_row> &,
+                                const std::size_t &) noexcept;
 }
 
