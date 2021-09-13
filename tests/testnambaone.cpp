@@ -21,7 +21,10 @@
 // SOFTWARE.
 
 #include <gtest/gtest.h>
+#include <gtest/gtest-death-test.h>
 #include <DataTypes/Table.h>
+#include <csignal>
+#include <iostream>
 
 TEST(DTypes_Table, Creation) {
     auto executor = []() {
@@ -32,4 +35,8 @@ TEST(DTypes_Table, Creation) {
             (executor(), exit(0)),
             ::testing::ExitedWithCode(0),
             ".*");
+	/**
+	 * @see https://github.com/google/googletest/blob/master/docs/advanced.md#death-tests
+	 */
+	EXPECT_DEATH((std::raise(SIGTERM)), "");
 }
