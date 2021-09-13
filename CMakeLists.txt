@@ -51,10 +51,10 @@ file(GLOB_RECURSE SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp")
 # Exclude main.cpp from sources
 list(REMOVE_ITEM SOURCES "${PROJECT_SOURCE_DIR}/src/main.cpp")
 
-file(GLOB_RECURSE TEST_SOURCES "${PROJECT_SOURCE_DIR}/tests/*.cpp")
+file(GLOB_RECURSE TEST_SOURCES "${PROJECT_SOURCE_DIR}/tests/*.test.cpp")
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
-add_executable(${PROJECT_NAME} ${HEADERS} ${SOURCES} "${PROJECT_SOURCE_DIR}/src/main.cpp")
+add_executable(${PROJECT_NAME} ${HEADERS} ${SOURCES} "${PROJECT_SOURCE_DIR}/src/main.cpp" tests/DataTypes/Table.test.cpp)
 
 if (NOT CMAKE_PREFIX_PATH)
     message(WARNING "CMAKE_PREFIX_PATH is not defined, you may need to set it "

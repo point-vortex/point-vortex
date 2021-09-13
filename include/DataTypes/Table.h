@@ -111,11 +111,17 @@ namespace DTypes {
         Table &addColumn(const QString &name, const TYPES &type);
         Table &addColumn(const QString &name, const DataType *defaultValue) noexcept;
     public:
+        //TODO: add template type checks.
         template<class T>
-        iterator erase(const iterator_base<T> &position) noexcept; //TODO: add template type checks.
+        iterator erase(const iterator_base<T> &position) noexcept;
+        //TODO: add template type checks.
         template<class T>
-        iterator
-        erase(const iterator_base<T> &from, const iterator_base<T> &to) noexcept; //TODO: add template type checks.
+        iterator erase(const iterator_base<T> &from, const iterator_base<T> &to) noexcept;
+    public:
+        void clear();
+        [[nodiscard]] bool empty() const noexcept;
+    public:
+        [[nodiscard]] std::vector<QString> columns() const noexcept;
     public:
         iterator begin() noexcept;
         iterator end() noexcept;

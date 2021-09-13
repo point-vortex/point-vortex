@@ -27,17 +27,14 @@ namespace DTypes {
     extern DTProto_t DTProto;
 
 // ----------------------------------------------------------------------------------------------------------- TABLE ---
-    Table::Table() : _size(0) {}
+    Table::Table() : _size(0), _capacity(0), data() {}
 
-    Table::Table(const Table &reference) : _size(reference._size), data(), _capacity(reference._size) {
+    Table::Table(const Table &reference) : _size(0), data(), _capacity(reference._size) {
         this->append(reference);
     }
 
     Table::~Table() {
-        storage_t::iterator column = this->data.begin();
-        while (column != this->data.end()) {
-            column = this->dropColumn(column);
-        }
+        this->clear();
     }
 
     Table &Table::append(const const_row &row) {
@@ -102,7 +99,12 @@ namespace DTypes {
                 delete (record);
             }
             column->second.first.clear();
-            return this->data.erase(column);
+            auto newColumn = this->data.erase(column);
+            if (this->data.empty()) {
+                this->_size = 0;
+                this->_capacity = 0;
+            }
+            return newColumn;
         }
         return column;
     }
@@ -195,7 +197,7 @@ namespace DTypes {
     Table &Table::reserve(const std::size_t &newCapacity) {
         if (this->_capacity < newCapacity) return *this;
         this->_capacity = newCapacity;
-        for (std::pair<const QString, map_item_t> &column : this->data) {
+        for (std::pair<const QString, map_item_t> &column: this->data) {
             column.second.first.reserve(newCapacity);
         }
         return *this;
@@ -211,10 +213,10 @@ namespace DTypes {
 
     std::ostream &Table::print(std::ostream &os) const noexcept {
         //TODO: rewrite with self iterators
-        for (auto column : this->data) {
+        for (auto column: this->data) {
             vector_t &array = column.second.first;
             os << column.first.toStdString();
-            for (auto record : array) {
+            for (auto record: array) {
                 os << " ";
                 record->print(os);
             }
@@ -241,7 +243,7 @@ namespace DTypes {
     Table::iterator Table::erase(const Table::iterator_base<T> &from, const Table::iterator_base<T> &to) noexcept {
         if (from.shift >= to.shift) return Table::iterator(this, from.shift);
 
-        for (std::pair<const QString, map_item_t> &column : this->data) {
+        for (std::pair<const QString, map_item_t> &column: this->data) {
             vector_t &array = column.second.first;
             vector_t::iterator arrayBegin = array.begin();
             auto start = arrayBegin + static_cast<long long>(from.shift);
@@ -261,6 +263,25 @@ namespace DTypes {
         return this->erase(position, position + 1);
     }
 
+    void Table::clear() {
+        storage_t::iterator column = this->data.begin();
+        while (column != this->data.end()) {
+            column = this->dropColumn(column);
+        }
+    }
+
+    bool Table::empty() const noexcept {
+        return !this->_size;
+    }
+
+    std::vector<QString> Table::columns() const noexcept {
+        std::vector<QString> keys;
+        for (const std::pair<const QString, const map_item_t &> &column: this->data) {
+            keys.push_back(column.first);
+        }
+        return keys;
+    }
+
     void Table::syncCapacity() noexcept { if (this->_capacity < this->_size) this->_capacity = this->_size; }
 
     // --------------------------------------------------------------------------------------------------- ITERATOR BASE ---
@@ -271,9 +292,9 @@ namespace DTypes {
 
     template<class T>
     T &Table::iterator_base<T>::sync() noexcept {
-        if (this->target->_size < this->shift) {
-            for (const std::pair<QString, Table::map_item_t> &column: target->data) {
-                this->_row.insert(std::make_pair(column.first, column.second.first.at(shift)));
+        if (this->shift < this->target->_size) {
+            for (const std::pair<const QString, Table::map_item_t> &column: target->data) {
+                this->_row.insert_or_assign(column.first, column.second.first.at(shift));
             }
         }
         return this->_row;
@@ -319,11 +340,13 @@ namespace DTypes {
 
     template<class T>
     typename Table::iterator_base<T>::reference Table::iterator_base<T>::operator*() noexcept {
+        this->sync();
         return this->_row;
     }
 
     template<class T>
     typename Table::iterator_base<T>::pointer Table::iterator_base<T>::operator->() noexcept {
+        this->sync();
         return &this->_row;
     }
 
