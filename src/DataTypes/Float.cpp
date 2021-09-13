@@ -34,7 +34,7 @@ namespace DTypes {
     }
 
     TYPES Float::type() const noexcept {
-        return TYPES::FLOAT;
+        return Float::static_type;
     }
 
     float Float::get() const noexcept {
@@ -100,39 +100,39 @@ namespace DTypes {
         return old;
     }
 
-    Float &Float::operator+=(Float &rhs) noexcept {
+    Float &Float::operator+=(const Float &rhs) noexcept {
         this->x += rhs.x;
         return *this;
     }
 
-    Float &Float::operator-=(Float &rhs) noexcept {
+    Float &Float::operator-=(const Float &rhs) noexcept {
         this->x -= rhs.x;
         return *this;
     }
 
-    Float &Float::operator/=(Float &rhs) noexcept {
+    Float &Float::operator/=(const Float &rhs) noexcept {
         this->x /= rhs.x;
         return *this;
     }
 
-    Float &Float::operator*=(Float &rhs) noexcept {
+    Float &Float::operator*=(const Float &rhs) noexcept {
         this->x *= rhs.x;
         return *this;
     }
 
-    Float operator+(Float &lhs, Float rhs) noexcept {
+    Float operator+(const Float &lhs, const Float& rhs) noexcept {
         return {lhs.x + rhs.x};
     }
 
-    Float operator-(Float &lhs, Float rhs) noexcept {
+    Float operator-(const Float &lhs, const Float& rhs) noexcept {
         return {lhs.x - rhs.x};
     }
 
-    Float operator*(Float &lhs, Float rhs) noexcept {
+    Float operator*(const Float &lhs, const Float& rhs) noexcept {
         return {lhs.x * rhs.x};
     }
 
-    Float operator/(Float &lhs, Float rhs) noexcept {
+    Float operator/(const Float &lhs, const Float& rhs) noexcept {
         return {lhs.x / rhs.x};
     }
 

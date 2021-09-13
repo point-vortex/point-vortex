@@ -64,15 +64,15 @@ namespace DTypes {
         Float &operator--() noexcept;
         Float operator--(int) noexcept;
     public:
-        Float &operator+=(Float &rhs) noexcept;
-        Float &operator-=(Float &rhs) noexcept;
-        Float &operator/=(Float &rhs) noexcept;
-        Float &operator*=(Float &rhs) noexcept;
+        Float &operator+=(const Float &rhs) noexcept;
+        Float &operator-=(const Float &rhs) noexcept;
+        Float &operator/=(const Float &rhs) noexcept;
+        Float &operator*=(const Float &rhs) noexcept;
     public:
-        friend Float operator+(Float &lhs, Float rhs) noexcept;
-        friend Float operator-(Float &lhs, Float rhs) noexcept;
-        friend Float operator*(Float &lhs, Float rhs) noexcept;
-        friend Float operator/(Float &lhs, Float rhs) noexcept;
+        friend Float operator+(const Float &lhs, const Float& rhs) noexcept;
+        friend Float operator-(const Float &lhs, const Float& rhs) noexcept;
+        friend Float operator*(const Float &lhs, const Float& rhs) noexcept;
+        friend Float operator/(const Float &lhs, const Float& rhs) noexcept;
     public:
         friend std::ostream &operator<<(std::ostream &os, const Float &value) noexcept;
         std::ostream &print(std::ostream &os) const noexcept override;

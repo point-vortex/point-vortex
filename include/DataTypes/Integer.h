@@ -63,15 +63,15 @@ namespace DTypes {
         Integer &operator--() noexcept;
         Integer operator--(int) noexcept;
     public:
-        Integer &operator+=(Integer &rhs) noexcept;
-        Integer &operator-=(Integer &rhs) noexcept;
-        Integer &operator/=(Integer &rhs) noexcept;
-        Integer &operator*=(Integer &rhs) noexcept;
+        Integer &operator+=(const Integer &rhs) noexcept;
+        Integer &operator-=(const Integer &rhs) noexcept;
+        Integer &operator/=(const Integer &rhs) noexcept;
+        Integer &operator*=(const Integer &rhs) noexcept;
     public:
-        friend Integer operator+(Integer &lhs, Integer rhs) noexcept;
-        friend Integer operator-(Integer &lhs, Integer rhs) noexcept;
-        friend Integer operator*(Integer &lhs, Integer rhs) noexcept;
-        friend Integer operator/(Integer &lhs, Integer rhs) noexcept;
+        friend Integer operator+(const Integer &lhs, const Integer& rhs) noexcept;
+        friend Integer operator-(const Integer &lhs, const Integer& rhs) noexcept;
+        friend Integer operator*(const Integer &lhs, const Integer& rhs) noexcept;
+        friend Integer operator/(const Integer &lhs, const Integer& rhs) noexcept;
     public:
         friend std::ostream &operator<<(std::ostream &os, const Integer &value) noexcept;
         std::ostream& print(std::ostream& os) const noexcept override;

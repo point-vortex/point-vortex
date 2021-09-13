@@ -58,15 +58,15 @@ namespace DTypes {
         bool operator<=(const Boolean &rhs) const noexcept;
         bool operator>=(const Boolean &rhs) const noexcept;
     public:
-        Boolean &operator+=(Boolean &rhs) noexcept;
-        Boolean &operator-=(Boolean &rhs) noexcept;
-        Boolean &operator/=(Boolean &rhs) noexcept;
-        Boolean &operator*=(Boolean &rhs) noexcept;
+        Boolean &operator+=(const Boolean &rhs) noexcept;
+        Boolean &operator-=(const Boolean &rhs) noexcept;
+        Boolean &operator/=(const Boolean &rhs) noexcept;
+        Boolean &operator*=(const Boolean &rhs) noexcept;
     public:
-        friend Boolean operator+(Boolean &lhs, Boolean rhs) noexcept;
-        friend Boolean operator-(Boolean &lhs, Boolean rhs) noexcept;
-        friend Boolean operator*(Boolean &lhs, Boolean rhs) noexcept;
-        friend Boolean operator/(Boolean &lhs, Boolean rhs) noexcept;
+        friend Boolean operator+(const Boolean &lhs, const Boolean &rhs) noexcept;
+        friend Boolean operator-(const Boolean &lhs, const Boolean &rhs) noexcept;
+        friend Boolean operator*(const Boolean &lhs, const Boolean &rhs) noexcept;
+        friend Boolean operator/(const Boolean &lhs, const Boolean &rhs) noexcept;
     public:
         friend std::ostream &operator<<(std::ostream &os, const Boolean &value) noexcept;
         std::ostream &print(std::ostream& os) const noexcept override;

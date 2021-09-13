@@ -34,7 +34,7 @@ namespace DTypes {
     }
 
     TYPES Boolean::type() const noexcept {
-        return TYPES::BOOLEAN;
+        return Boolean::static_type;
     }
 
     bool Boolean::get() const noexcept {
@@ -73,39 +73,39 @@ namespace DTypes {
         return this->x >= rhs.x;
     }
 
-    Boolean &Boolean::operator+=(Boolean &rhs) noexcept {
+    Boolean &Boolean::operator+=(const Boolean &rhs) noexcept {
         this->x += rhs.x;
         return *this;
     }
 
-    Boolean &Boolean::operator-=(Boolean &rhs) noexcept {
+    Boolean &Boolean::operator-=(const Boolean &rhs) noexcept {
         this->x -= rhs.x;
         return *this;
     }
 
-    Boolean &Boolean::operator/=(Boolean &rhs) noexcept {
+    Boolean &Boolean::operator/=(const Boolean &rhs) noexcept {
         this->x /= rhs.x;
         return *this;
     }
 
-    Boolean &Boolean::operator*=(Boolean &rhs) noexcept {
+    Boolean &Boolean::operator*=(const Boolean &rhs) noexcept {
         this->x *= rhs.x;
         return *this;
     }
 
-    Boolean operator+(Boolean &lhs, Boolean rhs) noexcept {
+    Boolean operator+(const Boolean &lhs, const Boolean &rhs) noexcept {
         return {static_cast<bool>(lhs.x + rhs.x)};
     }
 
-    Boolean operator-(Boolean &lhs, Boolean rhs) noexcept {
+    Boolean operator-(const Boolean &lhs, const Boolean &rhs) noexcept {
         return {static_cast<bool>(lhs.x - rhs.x)};
     }
 
-    Boolean operator*(Boolean &lhs, Boolean rhs) noexcept {
+    Boolean operator*(const Boolean &lhs, const Boolean &rhs) noexcept {
         return {static_cast<bool>(lhs.x * rhs.x)};
     }
 
-    Boolean operator/(Boolean &lhs, Boolean rhs) noexcept {
+    Boolean operator/(const Boolean &lhs, const Boolean &rhs) noexcept {
         return {static_cast<bool>(lhs.x / rhs.x)};
     }
 

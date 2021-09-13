@@ -100,39 +100,39 @@ namespace DTypes {
         return old;
     }
 
-    Integer &Integer::operator+=(Integer &rhs) noexcept {
+    Integer &Integer::operator+=(const Integer &rhs) noexcept {
         this->x += rhs.x;
         return *this;
     }
 
-    Integer &Integer::operator-=(Integer &rhs) noexcept {
+    Integer &Integer::operator-=(const Integer &rhs) noexcept {
         this->x -= rhs.x;
         return *this;
     }
 
-    Integer &Integer::operator/=(Integer &rhs) noexcept {
+    Integer &Integer::operator/=(const Integer &rhs) noexcept {
         this->x /= rhs.x;
         return *this;
     }
 
-    Integer &Integer::operator*=(Integer &rhs) noexcept {
+    Integer &Integer::operator*=(const Integer &rhs) noexcept {
         this->x *= rhs.x;
         return *this;
     }
 
-    Integer operator+(Integer &lhs, Integer rhs) noexcept {
+    Integer operator+(const Integer &lhs, const Integer &rhs) noexcept {
         return {lhs.x + rhs.x};
     }
 
-    Integer operator-(Integer &lhs, Integer rhs) noexcept {
+    Integer operator-(const Integer &lhs, const Integer &rhs) noexcept {
         return {lhs.x - rhs.x};
     }
 
-    Integer operator*(Integer &lhs, Integer rhs) noexcept {
+    Integer operator*(const Integer &lhs, const Integer &rhs) noexcept {
         return {lhs.x * rhs.x};
     }
 
-    Integer operator/(Integer &lhs, Integer rhs) noexcept {
+    Integer operator/(const Integer &lhs, const Integer &rhs) noexcept {
         return {lhs.x / rhs.x};
     }
 

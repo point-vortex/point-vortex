@@ -49,7 +49,7 @@ namespace DTypes {
         virtual ~DataType() = default;
         [[nodiscard]] DataType *copy() const override = 0;
     public:
-        virtual TYPES type() const noexcept { return TYPES::UNKNOWN; }
+        virtual TYPES type() const noexcept { return DataType::static_type; }
         virtual std::ostream& print(std::ostream& os) const noexcept = 0;
         virtual void a() {} //TODO: remove
     };
