@@ -40,9 +40,9 @@ namespace DTypes {
         }
     }
 
-    Table &Table::append(const Row &row) {
+    Table &Table::append(const const_row &row) {
         storage_t::iterator column;
-        for (const std::pair<const QString, DataType *> &record: row) {
+        for (const std::pair<const QString, const DataType *> &record: row) {
             column = this->createColumn(record.first, record.second->type());
             column->second.first.emplace_back(record.second->copy());
         }
@@ -68,7 +68,7 @@ namespace DTypes {
         return *this;
     }
 
-    Table &Table::emplace(const Table::Row &row) {
+    Table &Table::emplace(const Table::row &row) {
         storage_t::iterator column;
         for (const std::pair<const QString, DataType *> &record: row) {
             column = this->createColumn(record.first, record.second->type());
@@ -228,10 +228,11 @@ namespace DTypes {
     }
 
 // ------------------------------------------------------------------------------------------------------------- ROW ---
-    Table::Row::~Row() {
-        for (const std::pair<QString, DataType *> record: *this) {
-            delete record.second;
-        }
-    }
+//    template<class T>
+//    Table::row_base<T>::~row_base() {
+//        for (const std::pair<QString, DataType *> record: *this) {
+//            delete record.second;
+//        }
+//    }
 }
 

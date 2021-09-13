@@ -33,25 +33,30 @@
 namespace DTypes {
     class Table : public DataType {
     public:
+//        template<class T>
+//        class row_base
+//                : protected std::map<QString, T> { //TODO: needs two row_base types. Const and not const. DataType* always not const.
+//        public:
+//            ~row_base();
+//        public:
+//            using std::map<QString, T>::insert;
+//            using std::map<QString, T>::clear;
+//            using std::map<QString, T>::erase;
+//            using std::map<QString, T>::contains;
+//            using std::map<QString, T>::size;
+//            using std::map<QString, T>::at;
+//            using std::map<QString, T>::begin;
+//            using std::map<QString, T>::end;
+//            using std::map<QString, T>::iterator;
+//            using std::map<QString, T>::const_iterator;
+//            using std::map<QString, T>::reverse_iterator;
+//            using std::map<QString, T>::const_reverse_iterator;
+//            using std::map<QString, T>::operator[];
+//        };
 
-        class Row : protected std::map<QString, DataType *> { //TODO: needs two row types. Const and not const. DataType* always not const.
-        public:
-            ~Row();
-        public:
-            using std::map<QString, DataType *>::insert;
-            using std::map<QString, DataType *>::clear;
-            using std::map<QString, DataType *>::erase;
-            using std::map<QString, DataType *>::contains;
-            using std::map<QString, DataType *>::size;
-            using std::map<QString, DataType *>::at;
-            using std::map<QString, DataType *>::begin;
-            using std::map<QString, DataType *>::end;
-            using std::map<QString, DataType *>::iterator;
-            using std::map<QString, DataType *>::const_iterator;
-            using std::map<QString, DataType *>::reverse_iterator;
-            using std::map<QString, DataType *>::const_reverse_iterator;
-            using std::map<QString, DataType *>::operator[];
-        };
+    public:
+        using row = std::map<QString, DataType *>;
+        using const_row = std::map<QString, const DataType *>;
 
     public:
         template<class T>
@@ -66,11 +71,11 @@ namespace DTypes {
         private:
             Table *target;
             std::size_t shift;
-            Row row;
+            T row;
         private:
             explicit iterator_base(Table *target, const std::size_t &shift = 0);
         private:
-            Row &sync() noexcept;
+            T &sync() noexcept;
         public:
             iterator_base<T> &operator++() noexcept;
             const iterator_base<T> operator++(int) noexcept;
@@ -94,8 +99,8 @@ namespace DTypes {
         };
 
     public:
-        using const_iterator = iterator_base<const Row>;
-        using iterator = iterator_base<Row>;
+        using const_iterator = iterator_base<const_row>;
+        using iterator = iterator_base<row>;
         friend iterator;
         friend const_iterator;
     protected:
@@ -111,9 +116,9 @@ namespace DTypes {
         Table(const Table &reference);
         ~Table() override;
     public:
-        Table &append(const Row &row);
+        Table &append(const const_row &row);
         Table &append(const Table &table);
-        Table &emplace(const Row &row);
+        Table &emplace(const row &row);
         Table &emplace(const Table &table);
     public:
         Table &dropColumn(const QString &name) noexcept;
@@ -181,7 +186,7 @@ namespace DTypes {
             : target(target), shift(shift), row() {}
 
     template<class T>
-    Table::Row &Table::iterator_base<T>::sync() noexcept {
+    T &Table::iterator_base<T>::sync() noexcept {
         if (this->target->_size < this->shift) {
             for (const std::pair<QString, Table::map_item_t> &column: target->data) {
                 this->row.insert(std::make_pair(column.first, column.second.first.at(shift)));

@@ -37,7 +37,7 @@ void handleSIGINT(int signum) {
 
 int main(int argc, char *argv[]) {
     DTypes::Table table1;
-    DTypes::Table::Row row;
+    DTypes::Table::row row;
     row.insert(std::make_pair("hello", new DTypes::Integer(1)));
     row.insert(std::make_pair("my", new DTypes::Float(2.0f)));
     table1.emplace(row);
@@ -95,16 +95,16 @@ int main(int argc, char *argv[]) {
     table3.print(std::cout);
 
 
-    for (const auto& a : table3) {
-        dynamic_cast<DTypes::Integer*>(a.at("aa"))->set(1);
-        a.at("aa")->a();
-    }
-
-    table3.cbegin()->at("a")->a();
-    for (auto i = table3.cbegin(); i != table3.cend(); i++) {
-        dynamic_cast<DTypes::Integer*>(i->at("aa"))->set(1);
-        i->at("aa")->a();
-    }
+//    for (const auto& a : table3) {
+//        dynamic_cast<DTypes::Integer*>(a.at("aa"))->set(1);
+//        a.at("aa")->a();
+//    }
+//
+//    table3.cbegin()->at("a")->a();
+//    for (auto i = table3.cbegin(); i != table3.cend(); i++) {
+//        dynamic_cast<DTypes::Integer*>(i->at("aa"))->set(1);
+//        i->at("aa")->a();
+//    }
 
     signal(SIGINT, handleSIGINT);
 
