@@ -44,8 +44,6 @@ namespace DTypes {
     public:
         [[nodiscard]] Boolean *copy() const noexcept override;
     public:
-        TYPES type() const noexcept override;
-    public:
         [[nodiscard]] virtual bool get() const noexcept;
         virtual void set(bool x) noexcept;
     public:

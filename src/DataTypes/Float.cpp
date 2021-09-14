@@ -33,10 +33,6 @@ namespace DTypes {
         return new Float(*this);
     }
 
-    TYPES Float::type() const noexcept {
-        return Float::static_type;
-    }
-
     float Float::get() const noexcept {
         return this->x;
     }

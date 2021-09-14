@@ -33,10 +33,6 @@ namespace DTypes {
         return new Integer(*this);
     }
 
-    TYPES Integer::type() const noexcept {
-        return TYPES::INTEGER;
-    }
-
     int Integer::get() const noexcept {
         return this->x;
     }

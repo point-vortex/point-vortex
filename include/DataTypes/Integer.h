@@ -43,8 +43,6 @@ namespace DTypes {
     public:
         Integer *copy() const noexcept override;
     public:
-        TYPES type() const noexcept override;
-    public:
         [[nodiscard]] virtual int get() const noexcept;
         virtual Integer &set(int x) noexcept;
     public:

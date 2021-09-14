@@ -20,40 +20,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef POINT_VORTEX_DATATYPE_H
-#define POINT_VORTEX_DATATYPE_H
+//
+// Created by Denis Afendikov on 14.09.2021.
+//
 
-#include "utils/ICopyable.h"
-
-#include <ostream>
+#include "DataTypes/vec2.h"
 
 namespace DTypes {
-    enum class TYPES {
-        UNKNOWN,
-        INTEGER,
-        FLOAT,
-        BOOLEAN,
-        STRING,
-        VEC2,
-    };
+    const TYPES vec2::static_type = TYPES::VEC2;
 
-    class Integer;
+    vec2 *vec2::copy() const noexcept {
+        return new vec2(*this);
+    }
 
-    class Float;
+    std::ostream &vec2::print(std::ostream &os) const noexcept {
+        return os;
+    }
 
-    class Boolean;
-
-    class DataType : public utils::ICopyable {
-    public:
-        const static TYPES static_type = TYPES::UNKNOWN;
-    public:
-        virtual ~DataType() = default;
-        [[nodiscard]] DataType *copy() const override = 0;
-    public:
-        virtual TYPES type() const noexcept { return DataType::static_type; }
-        virtual std::ostream& print(std::ostream& os) const noexcept = 0;
-        virtual void a() {} //TODO: remove
-    };
 }
-
-#endif //POINT_VORTEX_DATATYPE_H

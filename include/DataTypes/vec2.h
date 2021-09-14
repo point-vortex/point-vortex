@@ -20,40 +20,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef POINT_VORTEX_DATATYPE_H
-#define POINT_VORTEX_DATATYPE_H
+//
+// Created by Denis Afendikov on 14.09.2021.
+//
 
-#include "utils/ICopyable.h"
+#ifndef _VEC2_H_
+#define _VEC2_H_
 
-#include <ostream>
+#include "DataTypes/DataType.h"
+#include <QVector2D>
 
 namespace DTypes {
-    enum class TYPES {
-        UNKNOWN,
-        INTEGER,
-        FLOAT,
-        BOOLEAN,
-        STRING,
-        VEC2,
-    };
-
-    class Integer;
-
-    class Float;
-
-    class Boolean;
-
-    class DataType : public utils::ICopyable {
+    /**
+     * vec2 - class for storing vector of 2 floating point values (x, y).
+     * @author Denys Afendikov
+     */
+    class vec2 : public DataType, public QVector2D {
     public:
-        const static TYPES static_type = TYPES::UNKNOWN;
+        const static TYPES static_type;
     public:
-        virtual ~DataType() = default;
-        [[nodiscard]] DataType *copy() const override = 0;
+        using QVector2D::QVector2D;
     public:
-        virtual TYPES type() const noexcept { return DataType::static_type; }
-        virtual std::ostream& print(std::ostream& os) const noexcept = 0;
-        virtual void a() {} //TODO: remove
+        vec2 *copy() const noexcept override;
+    public:
+        friend std::ostream &operator<<(std::ostream &os, const vec2 &value) noexcept;
+        std::ostream &print(std::ostream &os) const noexcept override;
     };
 }
 
-#endif //POINT_VORTEX_DATATYPE_H
+#endif //_VEC2_H_

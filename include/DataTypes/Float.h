@@ -44,8 +44,6 @@ namespace DTypes {
     public:
         Float *copy() const noexcept override;
     public:
-        TYPES type() const noexcept override;
-    public:
         [[nodiscard]] virtual float get() const noexcept;
         virtual Float &set(float x) noexcept;
     public:
