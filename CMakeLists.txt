@@ -54,7 +54,7 @@ list(REMOVE_ITEM SOURCES "${PROJECT_SOURCE_DIR}/src/main.cpp")
 file(GLOB_RECURSE TEST_SOURCES "${PROJECT_SOURCE_DIR}/tests/*.test.cpp")
 
 include_directories(${CMAKE_SOURCE_DIR}/include)
-add_executable(${PROJECT_NAME} ${HEADERS} ${SOURCES} "${PROJECT_SOURCE_DIR}/src/main.cpp" tests/DataTypes/Table.test.cpp)
+add_executable(${PROJECT_NAME} ${HEADERS} ${SOURCES} "${PROJECT_SOURCE_DIR}/src/main.cpp")
 
 if (NOT CMAKE_PREFIX_PATH)
     message(WARNING "CMAKE_PREFIX_PATH is not defined, you may need to set it "
@@ -131,3 +131,7 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         "${PROJECT_BINARY_DIR}/shaders"
         "$<TARGET_FILE_DIR:${PROJECT_NAME}>/shaders"
         )
+
+
+# -------------------------------------------------- Copy GLSL shaders sources TODO: use SPIRV with OpenGL
+file(COPY ${PROJECT_SOURCE_DIR}/shaders DESTINATION ${PROJECT_BINARY_DIR})

@@ -25,6 +25,7 @@
 
 #include <QApplication>
 #include <QPushButton>
+#include <Viewport3D/OpenglViewport.h>
 
 //-----TEMP INCLUDe
 #include "DataTypes/Table.h"
@@ -109,8 +110,8 @@ int main(int argc, char *argv[]) {
     signal(SIGINT, handleSIGINT);
 
     QApplication a(argc, argv);
-    QPushButton button("Hello world!", nullptr);
-    button.resize(200, 100);
-    button.show();
+    OpenglViewport viewport{};
+    viewport.resize(200, 100);
+    viewport.show();
     return QApplication::exec();
 }

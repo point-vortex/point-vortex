@@ -29,6 +29,7 @@ OpenglViewport::OpenglViewport() {
 }
 
 void OpenglViewport::initializeGL() {
+    initializeOpenGLFunctions();
     shadingProgram = new QOpenGLShaderProgram(this);
     shadingProgram->addShaderFromSourceFile(QOpenGLShader::Vertex, "shaders/viewport3d.vert");
     shadingProgram->addShaderFromSourceFile(QOpenGLShader::Fragment, "shaders/viewport3d.frag");
@@ -47,18 +48,19 @@ void OpenglViewport::resizeGL(int w, int h) {
 }
 
 void OpenglViewport::paintGL() {
-//    const qreal retinaScale = devicePixelRatio();
-//    glViewport(0, 0, width() * retinaScale, height() * retinaScale);
-//
-//    glClear(GL_COLOR_BUFFER_BIT);
-//
-//    shadingProgram->bind();
-//
-//    QMatrix4x4 matrix;
-//    matrix.perspective(60.0f, 4.0f / 3.0f, 0.1f, 100.0f);
-//    matrix.translate(0, 0, -2);
-//    matrix.rotate(100.0f * static_cast<float>(m_frame) / screen()->refreshRate(), 0, 1, 0);
-//
+    const qreal retinaScale = devicePixelRatio();
+    glViewport(0, 0, width() * retinaScale, height() * retinaScale);
+
+    ::glClearColor(1.0f, 0.01f, 0.01f, 1.0f);
+    ::glClear(GL_COLOR_BUFFER_BIT);
+
+    shadingProgram->bind();
+
+    QMatrix4x4 matrix;
+    matrix.perspective(60.0f, 4.0f / 3.0f, 0.1f, 100.0f);
+    matrix.translate(0, 0, -2);
+    matrix.rotate(100.0f * static_cast<float>(m_frame) / screen()->refreshRate(), 0, 1, 0);
+
 //    shadingProgram->setUniformValue(m_matrixUniform, matrix);
 //
 //    static const GLfloat vertices[] = {
