@@ -61,7 +61,7 @@ TEST(DTypes__Table, Copy_constructor) {
     ASSERT_EQ(table2.size(), 2);
     ASSERT_EQ(table1.columns().size(), 0);
     ASSERT_EQ(table2.columns().size(), 2);
-    ASSERT_EQ((dynamic_cast<DTypes::Integer*>(table2.begin()->at("foo"))->get()), 1);
+    ASSERT_EQ((dynamic_cast<DTypes::Integer *>(table2.begin()->at("foo"))->get()), 1);
 }
 
 TEST(DTypes__Table, Clear) {
@@ -80,5 +80,39 @@ TEST(DTypes__Table, Clear) {
     ASSERT_FALSE(table1.empty());
     table1.clear();
     ASSERT_TRUE(table1.empty());
-    EXPECT_DEATH((dynamic_cast<DTypes::Integer *>(row.at("bar"))->get()),"");
+    EXPECT_DEATH((dynamic_cast<DTypes::Integer *>(row.at("bar"))->get()), "");
+}
+
+TEST(DTypes__Table, Erase) {
+    auto fillTable = [](DTypes::Table &table, std::size_t size = 1) {
+        table.clear();
+        DTypes::Table::row row;
+        for (std::size_t i = 0; i < size; i++) {
+            row.insert(std::make_pair("foo", new DTypes::Integer(1)));
+            row.insert(std::make_pair("bar", new DTypes::Float(1.0f)));
+            table.emplace(row);
+            row.clear();
+        }
+    };
+
+    DTypes::Table table{};
+    ASSERT_TRUE(table.empty());
+    fillTable(table, 10);
+    ASSERT_FALSE(table.empty());
+
+    table.erase(table.begin(), table.end());
+    ASSERT_TRUE(table.empty());
+    fillTable(table, 10);
+    ASSERT_FALSE(table.empty());
+
+    table.erase(table.begin() + 5);
+    ASSERT_EQ(table.size(), 9);
+
+    table.erase(table.begin() + 2);
+    ASSERT_EQ(table.size(), 8);
+    fillTable(table, 10);
+    ASSERT_FALSE(table.empty());
+
+    table.erase(table.begin() + 1, table.end() - 1);
+    ASSERT_EQ(table.size(), 2);
 }
